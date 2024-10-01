@@ -1,0 +1,91 @@
+{
+  "name": "clibbits",
+  "displayName": "Clibbits",
+  "description": "Copy customizable snippets to clipboard with usage tracking",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Clibbits",
+      "properties": {
+        "clibbits.snippets": {
+          "type": "array",
+          "default": [
+            {
+              "name": "Console log",
+              "snippet": "console.log();"
+            }
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the snippet"
+              },
+              "snippet": {
+                "type": "string",
+                "description": "The content of the snippet"
+              }
+            }
+          },
+          "description": "Define your custom snippets here."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "clibbits.openSnippetMenu",
+        "title": "Clibbits: Open Snippet Menu"
+      },
+      {
+        "command": "clibbits.addSnippet",
+        "title": "Clibbits: Add New Snippet"
+      },
+      {
+        "command": "clibbits.showStats",
+        "title": "Clibbits: Show Snippet Statistics"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "clibbits.openSnippetMenu",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "clibbits.openSnippetMenu",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/node": "14.x",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.1.0",
+    "typescript": "^4.4.4"
+  }
+}

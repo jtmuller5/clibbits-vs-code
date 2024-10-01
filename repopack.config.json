@@ -1,0 +1,20 @@
+{
+  "output": {
+    "filePath": "repopack-output.txt",
+    "style": "plain",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false
+  },
+  "include": [
+    "src",
+    "package.json",
+    "package.nls.json"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  }
+}
