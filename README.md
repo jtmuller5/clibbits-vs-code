@@ -11,15 +11,12 @@
 - **Smart Sorting**: Snippets are sorted by usage count, putting your most-used snippets at the top.
 - **Workspace Support**: Create project-specific snippets that only appear in the current workspace.
 
-## Installation
+## Manual Installation
 
-1. Download the `.vsix` file from the [releases page](https://github.com/yourusername/clibbits/releases) (replace with actual link when available).
-2. Open Visual Studio Code.
-3. Go to the Extensions view (Ctrl+Shift+X).
-4. Click on the "..." (More Actions) at the top of the Extensions view.
-5. Choose "Install from VSIX...".
-6. Navigate to and select the downloaded `.vsix` file.
-7. Reload VS Code when prompted.
+1. Clone this repository
+2. Open the repository in VS Code
+3. Run `vsce package` in the terminal
+4. Install the generated `.vsix` file in VS Code
 
 ## Usage
 
