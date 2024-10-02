@@ -1,8 +1,14 @@
 {
   "name": "clibbits",
   "displayName": "Clibbits",
-  "description": "Copy customizable snippets to clipboard with usage tracking",
-  "version": "0.1.0",
+  "description": "Copy customizable snippets to clipboard with usage tracking and workspace-specific settings",
+  "version": "0.3.0",
+  "publisher": "CodeontheRocks",
+  "icon": "clibbits.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtmuller5/clibbits"
+  },
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -38,7 +44,8 @@
               }
             }
           },
-          "description": "Define your custom snippets here."
+          "description": "Define your custom snippets here. These can be overridden in workspace settings.",
+          "scope": "resource"
         }
       }
     },
@@ -54,13 +61,22 @@
       {
         "command": "clibbits.showStats",
         "title": "Clibbits: Show Snippet Statistics"
+      },
+      {
+        "command": "clibbits.saveAsSnippet",
+        "title": "Clibbits: Save as Snippet"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "clibbits.openSnippetMenu",
-          "group": "navigation"
+          "group": "clibbits@1"
+        },
+        {
+          "command": "clibbits.saveAsSnippet",
+          "when": "editorHasSelection",
+          "group": "clibbits@2"
         }
       ]
     },
