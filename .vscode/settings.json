@@ -9,13 +9,21 @@
   // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
   "typescript.tsc.autoDetect": "off",
   "clibbits.snippets": [
-    {
-      "name": "Package Extension",
-      "snippet": "vsce package"
-    },
+	{
+		"name": "Package Extension",
+		"snippet": "vsce package"
+	},
 	{
 		"name": "Publish Extension",
 		"snippet": "vsce publish"
+	},
+	{
+		"name": "Publish Minor Version",
+		"snippet": "vsce publish minor"
+	},
+	{
+		"name": "Show Package Stats",
+		"snippet": "vsce show CodeontheRocks.clibbits"
 	}
-  ]
+]
 }

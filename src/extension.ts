@@ -206,7 +206,7 @@ function getStatsHtml(snippets: Snippet[]): string {
                 table { border-collapse: collapse; width: 100%; }
                 th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
                 th { background-color: #f2f2f2; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
+                tr:nth-child(even) { background-color: #AEAEAE; }
             </style>
         </head>
         <body>

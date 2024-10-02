@@ -2,6 +2,8 @@
 
 [Clibbits](https://marketplace.visualstudio.com/items?itemName=CodeontheRocks.clibbits) is a Visual Studio Code extension that allows you to manage and use custom code snippets with ease. It provides a quick way to access your snippets, tracks usage statistics, and supports both global and workspace-specific snippets.
 
+ID: `CodeontheRocks.clibbits`
+
 ## Features
 
 - **Custom Snippets**: Define your own snippets in VS Code settings, either globally or per workspace.
