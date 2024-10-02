@@ -1,6 +1,6 @@
 # Clibbits
 
-Clibbits is a Visual Studio Code extension that allows you to manage and use custom code snippets with ease. It provides a quick way to access your snippets, tracks usage statistics, and supports both global and workspace-specific snippets.
+[Clibbits](https://marketplace.visualstudio.com/items?itemName=CodeontheRocks.clibbits) is a Visual Studio Code extension that allows you to manage and use custom code snippets with ease. It provides a quick way to access your snippets, tracks usage statistics, and supports both global and workspace-specific snippets.
 
 ## Features
 
@@ -93,6 +93,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any problems or have any suggestions, please open an issue on the [GitHub repository](https://github.com/yourusername/clibbits/issues) (replace with actual link when available).
+If you encounter any problems or have any suggestions, please open an issue on the [GitHub repository](https://github.com/jtmuller5/clibbits?tab=readme-ov-file).
 
 Enjoy using Clibbits!
