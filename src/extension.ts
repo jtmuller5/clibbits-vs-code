@@ -9,7 +9,11 @@ interface FileNote {
     updatedAt: number;
 }
 
-let fileNotes: FileNote[] = [];
+interface ProjectNotes {
+    [projectPath: string]: FileNote[];
+}
+
+let projectNotes: ProjectNotes = {};
 
 class FileNotesProvider implements vscode.TreeDataProvider<FileNote> {
     private _onDidChangeTreeData: vscode.EventEmitter<FileNote | undefined | null | void> = new vscode.EventEmitter<FileNote | undefined | null | void>();
@@ -37,18 +41,23 @@ class FileNotesProvider implements vscode.TreeDataProvider<FileNote> {
         if (element) {
             return Promise.resolve([]);
         } else {
-            const activeEditor = vscode.window.activeTextEditor;
-            if (activeEditor) {
-                const currentFileName = path.basename(activeEditor.document.fileName);
-                return Promise.resolve(
-                    fileNotes.sort((a, b) => 
-                        a.fileName === currentFileName ? -1 :
-                        b.fileName === currentFileName ? 1 :
-                        0
-                    )
-                );
+            const currentProjectPath = getCurrentProjectPath();
+            if (currentProjectPath) {
+                const currentNotes = projectNotes[currentProjectPath] || [];
+                const activeEditor = vscode.window.activeTextEditor;
+                if (activeEditor) {
+                    const currentFileName = path.basename(activeEditor.document.fileName);
+                    return Promise.resolve(
+                        currentNotes.sort((a, b) => 
+                            a.fileName === currentFileName ? -1 :
+                            b.fileName === currentFileName ? 1 :
+                            0
+                        )
+                    );
+                }
+                return Promise.resolve(currentNotes);
             }
-            return Promise.resolve(fileNotes);
+            return Promise.resolve([]);
         }
     }
 }
@@ -82,7 +91,15 @@ class FileSystemProvider implements vscode.FileSystemProvider {
 
     readFile(uri: vscode.Uri): Uint8Array {
         const noteId = uri.path.split('/').pop();
-        const note = fileNotes.find(n => n.id === noteId);
+        const currentProjectPath = getCurrentProjectPath();
+        
+        if (!currentProjectPath) {
+            throw vscode.FileSystemError.FileNotFound();
+        }
+
+        const projectFileNotes = projectNotes[currentProjectPath] || [];
+        const note = projectFileNotes.find(n => n.id === noteId);
+        
         if (note) {
             return Buffer.from(`File: ${note.fileName}\n\n${note.content}`);
         }
@@ -91,7 +108,15 @@ class FileSystemProvider implements vscode.FileSystemProvider {
 
     writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): void {
         const noteId = uri.path.split('/').pop();
-        const note = fileNotes.find(n => n.id === noteId);
+        const currentProjectPath = getCurrentProjectPath();
+        
+        if (!currentProjectPath) {
+            throw vscode.FileSystemError.FileNotFound();
+        }
+
+        const projectFileNotes = projectNotes[currentProjectPath] || [];
+        const note = projectFileNotes.find(n => n.id === noteId);
+        
         if (note) {
             const newContent = Buffer.from(content).toString('utf8');
             const [, ...contentParts] = newContent.split('\n\n');
@@ -110,11 +135,19 @@ class FileSystemProvider implements vscode.FileSystemProvider {
     }
 }
 
+function getCurrentProjectPath(): string | undefined {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (workspaceFolders && workspaceFolders.length > 0) {
+        return workspaceFolders[0].uri.fsPath;
+    }
+    return undefined;
+}
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('Activating Clibbits File Notes extension');
 
     // Load existing notes
-    fileNotes = context.globalState.get('fileNotes', []);
+    projectNotes = context.globalState.get('projectNotes', {});
 
     const fileNotesProvider = new FileNotesProvider();
     const fileSystemProvider = new FileSystemProvider();
@@ -123,6 +156,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.workspace.registerFileSystemProvider('clibbits', fileSystemProvider, { isCaseSensitive: true }));
 
     const addNoteCommand = vscode.commands.registerCommand('clibbits.addNote', async () => {
+        const currentProjectPath = getCurrentProjectPath();
+        if (!currentProjectPath) {
+            vscode.window.showErrorMessage('No active project found. Please open a workspace to add notes.');
+            return;
+        }
+
         const activeEditor = vscode.window.activeTextEditor;
         let defaultFileName = activeEditor ? path.basename(activeEditor.document.fileName) : '';
         
@@ -143,24 +182,37 @@ export function activate(context: vscode.ExtensionContext) {
             updatedAt: Date.now()
         };
 
-        fileNotes.push(newNote);
-        await context.globalState.update('fileNotes', fileNotes);
+        if (!projectNotes[currentProjectPath]) {
+            projectNotes[currentProjectPath] = [];
+        }
+        projectNotes[currentProjectPath].push(newNote);
+        await context.globalState.update('projectNotes', projectNotes);
         fileNotesProvider.refresh();
     });
 
     const deleteNoteCommand = vscode.commands.registerCommand('clibbits.deleteNote', async (note: FileNote) => {
-        fileNotes = fileNotes.filter(n => n.id !== note.id);
-        await context.globalState.update('fileNotes', fileNotes);
-        fileNotesProvider.refresh();
+        const currentProjectPath = getCurrentProjectPath();
+        if (currentProjectPath && projectNotes[currentProjectPath]) {
+            projectNotes[currentProjectPath] = projectNotes[currentProjectPath].filter(n => n.id !== note.id);
+            await context.globalState.update('projectNotes', projectNotes);
+            fileNotesProvider.refresh();
+        }
     });
 
     const editNoteCommand = vscode.commands.registerCommand('clibbits.editNote', async (note: FileNote) => {
+        const currentProjectPath = getCurrentProjectPath();
+        if (!currentProjectPath) return;
+
         const newContent = await vscode.window.showInputBox({ prompt: 'Edit note content', value: note.content });
         if (newContent && newContent !== note.content) {
-            note.content = newContent;
-            note.updatedAt = Date.now();
-            await context.globalState.update('fileNotes', fileNotes);
-            fileNotesProvider.refresh();
+            const projectFileNotes = projectNotes[currentProjectPath];
+            const updatedNote = projectFileNotes.find(n => n.id === note.id);
+            if (updatedNote) {
+                updatedNote.content = newContent;
+                updatedNote.updatedAt = Date.now();
+                await context.globalState.update('projectNotes', projectNotes);
+                fileNotesProvider.refresh();
+            }
         }
     });
 
@@ -181,9 +233,14 @@ export function activate(context: vscode.ExtensionContext) {
     // Listen for text document save events
     vscode.workspace.onDidSaveTextDocument(document => {
         if (document.uri.scheme === 'clibbits') {
-            context.globalState.update('fileNotes', fileNotes);
+            context.globalState.update('projectNotes', projectNotes);
             fileNotesProvider.refresh();
         }
+    });
+
+    // Refresh the tree view when switching projects
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+        fileNotesProvider.refresh();
     });
 }
 

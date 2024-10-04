@@ -8,7 +8,7 @@
       "args": ["package"],
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
       },
       "problemMatcher": ["$tsc"]
     },
@@ -19,7 +19,7 @@
       "args": ["publish", "${input:versionType}"],
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
       },
       "problemMatcher": ["$tsc"]
     },
@@ -30,22 +30,31 @@
       "args": ["show", "CodeontheRocks.clibbits"],
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
       },
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ],
   "inputs": [
-	{
-		"id": "versionType",
-		"type": "pickString",
-		"options": [
-			"major",
-			"minor",
-			"patch"
-		],
-		"default": "minor",
-		"description": "Select the version type to publish"
-	}
+    {
+      "id": "versionType",
+      "type": "pickString",
+      "options": ["major", "minor", "patch"],
+      "default": "minor",
+      "description": "Select the version type to publish"
+    }
   ]
 }

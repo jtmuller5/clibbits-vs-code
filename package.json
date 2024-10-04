@@ -1,7 +1,7 @@
 {
   "name": "clibbits",
   "displayName": "Clibbits",
-  "description": "Add and manage file-specific notes in a VS Code sidebar",
+  "description": "Add and manage project-specific file notes in a VS Code sidebar",
   "version": "0.5.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
@@ -24,7 +24,7 @@
       "activitybar": [
         {
           "id": "clibbits-sidebar",
-          "title": "Clibbits Notes",
+          "title": "Clibbits Project Notes",
           "icon": "resources/clibbits-notes-icon.svg"
         }
       ]
@@ -33,29 +33,29 @@
       "clibbits-sidebar": [
         {
           "id": "clibbitsNotesExplorer",
-          "name": "File Notes"
+          "name": "Project File Notes"
         }
       ]
     },
     "commands": [
       {
         "command": "clibbits.addNote",
-        "title": "Add Note",
+        "title": "Add Project Note",
         "icon": "$(add)"
       },
       {
         "command": "clibbits.deleteNote",
-        "title": "Delete Note",
+        "title": "Delete Project Note",
         "icon": "$(trash)"
       },
       {
         "command": "clibbits.editNote",
-        "title": "Edit Note",
+        "title": "Edit Project Note",
         "icon": "$(edit)"
       },
       {
         "command": "clibbits.viewNote",
-        "title": "View Note"
+        "title": "View Project Note"
       }
     ],
     "menus": {
