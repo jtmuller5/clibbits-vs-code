@@ -1,8 +1,8 @@
 {
   "name": "clibbits",
   "displayName": "Clibbits",
-  "description": "Copy customizable snippets to clipboard with usage tracking and workspace-specific settings",
-  "version": "0.3.0",
+  "description": "Add and manage file-specific notes in a VS Code sidebar",
+  "version": "0.4.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
   "repository": {
@@ -16,77 +16,74 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onView:clibbitsNotesExplorer"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "configuration": {
-      "title": "Clibbits",
-      "properties": {
-        "clibbits.snippets": {
-          "type": "array",
-          "default": [
-            {
-              "name": "Console log",
-              "snippet": "console.log();"
-            }
-          ],
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "The name of the snippet"
-              },
-              "snippet": {
-                "type": "string",
-                "description": "The content of the snippet"
-              }
-            }
-          },
-          "description": "Define your custom snippets here. These can be overridden in workspace settings.",
-          "scope": "resource"
-        }
-      }
-    },
-    "commands": [
-      {
-        "command": "clibbits.openSnippetMenu",
-        "title": "Clibbits: Open Snippet Menu"
-      },
-      {
-        "command": "clibbits.addSnippet",
-        "title": "Clibbits: Add New Snippet"
-      },
-      {
-        "command": "clibbits.showStats",
-        "title": "Clibbits: Show Snippet Statistics"
-      },
-      {
-        "command": "clibbits.saveAsSnippet",
-        "title": "Clibbits: Save as Snippet"
-      }
-    ],
-    "menus": {
-      "editor/context": [
+    "viewsContainers": {
+      "activitybar": [
         {
-          "command": "clibbits.openSnippetMenu",
-          "group": "clibbits@1"
-        },
-        {
-          "command": "clibbits.saveAsSnippet",
-          "when": "editorHasSelection",
-          "group": "clibbits@2"
+          "id": "clibbits-sidebar",
+          "title": "Clibbits Notes",
+          "icon": "resources/clibbits-notes-icon.svg"
         }
       ]
     },
-    "keybindings": [
+    "views": {
+      "clibbits-sidebar": [
+        {
+          "id": "clibbitsNotesExplorer",
+          "name": "File Notes"
+        }
+      ]
+    },
+    "commands": [
       {
-        "command": "clibbits.openSnippetMenu",
-        "key": "ctrl+shift+c",
-        "mac": "cmd+shift+c"
+        "command": "clibbits.addNote",
+        "title": "Add Note",
+        "icon": "$(add)"
+      },
+      {
+        "command": "clibbits.deleteNote",
+        "title": "Delete Note",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "clibbits.editNote",
+        "title": "Edit Note",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "clibbits.viewNote",
+        "title": "View Note"
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "clibbits.addNote",
+          "when": "view == clibbitsNotesExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "clibbits.deleteNote",
+          "when": "view == clibbitsNotesExplorer && viewItem == fileNote",
+          "group": "inline"
+        },
+        {
+          "command": "clibbits.editNote",
+          "when": "view == clibbitsNotesExplorer && viewItem == fileNote",
+          "group": "inline"
+        },
+        {
+          "command": "clibbits.viewNote",
+          "when": "view == clibbitsNotesExplorer && viewItem == fileNote",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

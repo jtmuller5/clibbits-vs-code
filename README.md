@@ -1,86 +1,59 @@
 # Clibbits
 
-[Clibbits](https://marketplace.visualstudio.com/items?itemName=CodeontheRocks.clibbits) is a Visual Studio Code extension that allows you to manage and use custom code snippets with ease. It provides a quick way to access your snippets, tracks usage statistics, and supports both global and workspace-specific snippets.
+[Clibbits](https://marketplace.visualstudio.com/items?itemName=CodeontheRocks.clibbits) is a Visual Studio Code extension that allows you to create and manage file-specific notes directly within your editor. It provides a quick way to jot down important information about your files and access them easily through a dedicated sidebar.
 
 ID: `CodeontheRocks.clibbits`
 
 ## Features
 
-- **Custom Snippets**: Define your own snippets in VS Code settings, either globally or per workspace.
-- **Quick Access**: Access your snippets via the command palette, context menu, or keyboard shortcut.
-- **Usage Tracking**: Automatically tracks how often each snippet is used and when it was last used.
-- **Statistics View**: View usage statistics for all your snippets.
-- **Smart Sorting**: Snippets are sorted by usage count, putting your most-used snippets at the top.
-- **Workspace Support**: Create project-specific snippets that only appear in the current workspace.
+- **File-Specific Notes**: Create notes linked to specific files in your workspace.
+- **Sidebar View**: Access all your notes from a dedicated sidebar in VS Code.
+- **Smart Sorting**: Notes for the currently open file are automatically prioritized in the list.
+- **Easy Management**: Add, edit, and delete notes directly from the sidebar.
+- **Seamless Editing**: Edit your notes in a full VS Code editor with syntax highlighting.
+- **Auto-save**: Changes to notes are automatically saved when you save the document.
 
-## Manual Installation
+## Installation
 
-1. Clone this repository
-2. Open the repository in VS Code
-3. Run `vsce package` in the terminal
-4. Install the generated `.vsix` file in VS Code
+1. Open Visual Studio Code
+2. Press `Ctrl+P` (or `Cmd+P` on macOS) to open the Quick Open dialog
+3. Type `ext install CodeontheRocks.clibbits` to find the extension
+4. Click the Install button, then the Enable button
 
 ## Usage
 
-### Adding Snippets
+### Adding a Note
 
-There are three ways to add snippets:
+1. Click the Clibbits icon in the Activity Bar to open the sidebar.
+2. Click the "+" icon at the top of the sidebar.
+3. Enter the file name you want to associate the note with (it will default to the currently open file).
+4. Enter the content of your note.
 
-1. **Via Settings**: 
-   - For global snippets:
-     - Open VS Code settings (File > Preferences > Settings)
-     - Search for "Clibbits"
-     - Edit the `clibbits.snippets` setting to add your snippets in JSON format
-   - For workspace-specific snippets:
-     - Open the workspace settings (File > Preferences > Settings, then click on "Workspace" tab)
-     - Edit the `clibbits.snippets` setting in the workspace settings
+### Viewing Notes
 
-   Example:
-   ```json
-   "clibbits.snippets": [
-     {
-       "name": "Console log",
-       "snippet": "console.log();"
-     }
-   ]
-   ```
+- Open the Clibbits sidebar to see all your notes.
+- Notes are sorted to prioritize those linked to the currently open file.
+- Click on a note in the sidebar to open it in the editor.
 
-2. **Dynamically**:
-   - Open the Command Palette (Ctrl+Shift+P)
-   - Search for "Clibbits: Add New Snippet"
-   - Follow the prompts to enter the snippet name and content
-   - The snippet will be added to your workspace settings
+### Editing a Note
 
-3. **Saving Selected Text as a Snippet**:
-  1. Select the text you want to save as a snippet in the editor.
-  2. Right-click to open the context menu.
-  3. Choose "Clibbits: Save as Snippet".
-  4. Enter a name for your new snippet when prompted.
+1. Click on a note in the sidebar to open it in the editor.
+2. Make your changes in the editor.
+3. Save the document (Ctrl+S or Cmd+S) to persist your changes.
 
-### Using Snippets
+### Deleting a Note
 
-- Right-click in the editor to access the Clibbits menu in the context menu.
-- Use the keyboard shortcut Ctrl+Shift+C (Cmd+Shift+C on Mac) to open the snippet menu.
-- Use the Command Palette and search for "Clibbits: Open Snippet Menu".
+1. Right-click on a note in the sidebar.
+2. Select "Delete Note" from the context menu.
 
-### Viewing Statistics
+## Commands
 
-- Open the Command Palette (Ctrl+Shift+P)
-- Search for "Clibbits: Show Snippet Statistics"
+Clibbits provides the following commands (accessible via the Command Palette - Ctrl+Shift+P or Cmd+Shift+P):
 
-The new snippet will be saved to your workspace settings and will be immediately available for use.
-
-## Configuration
-
-Clibbits can be configured through VS Code settings. The available settings are:
-
-- `clibbits.snippets`: An array of snippet objects, each containing a `name` and `snippet` property. This can be set in both user and workspace settings.
-
-## Workspace vs. Global Snippets
-
-- Snippets defined in user settings are available in all workspaces.
-- Snippets defined in workspace settings are only available in that specific workspace.
-- Workspace settings override user settings for the `clibbits.snippets` configuration.
+- `Clibbits: Add Note`: Add a new note
+- `Clibbits: Delete Note`: Delete the selected note
+- `Clibbits: Edit Note`: Edit the selected note
+- `Clibbits: View Note`: Open the selected note in the editor
 
 ## Contributing
 
@@ -92,6 +65,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any problems or have any suggestions, please open an issue on the [GitHub repository](https://github.com/jtmuller5/clibbits?tab=readme-ov-file).
+If you encounter any problems or have any suggestions, please open an issue on the [GitHub repository](https://github.com/jtmuller5/clibbits).
 
 Enjoy using Clibbits!

@@ -1,229 +1,190 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
+import * as path from 'path';
 
-interface Snippet {
-  name: string;
-  snippet: string;
-  usageCount: number;
-  lastUsed?: number;
+interface FileNote {
+    id: string;
+    fileName: string;
+    content: string;
+    createdAt: number;
+    updatedAt: number;
 }
 
-let snippets: Snippet[] = [];
+let fileNotes: FileNote[] = [];
 
-function log(message: string) {
-  console.log(`[Clibbits] ${message}`);
+class FileNotesProvider implements vscode.TreeDataProvider<FileNote> {
+    private _onDidChangeTreeData: vscode.EventEmitter<FileNote | undefined | null | void> = new vscode.EventEmitter<FileNote | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<FileNote | undefined | null | void> = this._onDidChangeTreeData.event;
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
+
+    getTreeItem(element: FileNote): vscode.TreeItem {
+        return {
+            label: element.fileName,
+            tooltip: element.content,
+            collapsibleState: vscode.TreeItemCollapsibleState.None,
+            contextValue: 'fileNote',
+            command: {
+                command: 'clibbits.viewNote',
+                title: 'View Note',
+                arguments: [element]
+            }
+        };
+    }
+
+    getChildren(element?: FileNote): Thenable<FileNote[]> {
+        if (element) {
+            return Promise.resolve([]);
+        } else {
+            const activeEditor = vscode.window.activeTextEditor;
+            if (activeEditor) {
+                const currentFileName = path.basename(activeEditor.document.fileName);
+                return Promise.resolve(
+                    fileNotes.sort((a, b) => 
+                        a.fileName === currentFileName ? -1 :
+                        b.fileName === currentFileName ? 1 :
+                        0
+                    )
+                );
+            }
+            return Promise.resolve(fileNotes);
+        }
+    }
 }
 
-function loadSnippets(context: vscode.ExtensionContext) {
-  const config = vscode.workspace.getConfiguration("clibbits");
-  const configSnippets: { name: string; snippet: string }[] = config.get("snippets") || [];
+class FileSystemProvider implements vscode.FileSystemProvider {
+    private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+    readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this._emitter.event;
 
-  // Load snippets from configuration (which can be workspace-specific)
-  const configSnippetsWithCount: Snippet[] = configSnippets.map((s) => ({
-    ...s,
-    usageCount: 0,
-  }));
+    watch(uri: vscode.Uri, options: { recursive: boolean; excludes: string[]; }): vscode.Disposable {
+        // Not implemented for this example
+        return new vscode.Disposable(() => {});
+    }
 
-  // Load usage statistics
-  const usageStats: { [key: string]: { count: number; lastUsed?: number } } =
-    context.globalState.get("clibbitsUsageStats") || {};
+    stat(uri: vscode.Uri): vscode.FileStat {
+        return {
+            type: vscode.FileType.File,
+            ctime: Date.now(),
+            mtime: Date.now(),
+            size: 0
+        };
+    }
 
-  // Merge configuration snippets with usage statistics
-  snippets = configSnippetsWithCount.map((s) => ({
-    ...s,
-    usageCount: usageStats[s.name]?.count || 0,
-    lastUsed: usageStats[s.name]?.lastUsed,
-  }));
+    readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
+        // Not implemented for this example
+        return [];
+    }
 
-  log("Snippets reloaded");
-}
+    createDirectory(uri: vscode.Uri): void {
+        // Not implemented for this example
+    }
 
-async function addSnippet(context: vscode.ExtensionContext, name: string, snippet: string) {
-  const config = vscode.workspace.getConfiguration("clibbits");
-  const currentSnippets: { name: string; snippet: string }[] = config.get("snippets") || [];
-  currentSnippets.push({ name, snippet });
+    readFile(uri: vscode.Uri): Uint8Array {
+        const noteId = uri.path.split('/').pop();
+        const note = fileNotes.find(n => n.id === noteId);
+        if (note) {
+            return Buffer.from(`File: ${note.fileName}\n\n${note.content}`);
+        }
+        throw vscode.FileSystemError.FileNotFound();
+    }
 
-  await config.update("snippets", currentSnippets, vscode.ConfigurationTarget.Workspace);
-  vscode.window.showInformationMessage(
-    `Snippet "${name}" added successfully to workspace settings.`
-  );
+    writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): void {
+        const noteId = uri.path.split('/').pop();
+        const note = fileNotes.find(n => n.id === noteId);
+        if (note) {
+            const newContent = Buffer.from(content).toString('utf8');
+            const [, ...contentParts] = newContent.split('\n\n');
+            note.content = contentParts.join('\n\n');
+            note.updatedAt = Date.now();
+            this._emitter.fire([{ type: vscode.FileChangeType.Changed, uri }]);
+        }
+    }
 
-  loadSnippets(context);
+    delete(uri: vscode.Uri, options: { recursive: boolean; }): void {
+        // Not implemented for this example
+    }
+
+    rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean; }): void {
+        // Not implemented for this example
+    }
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  log("Clibbits extension is now active!");
+    console.log('Activating Clibbits File Notes extension');
 
-  loadSnippets(context);
+    // Load existing notes
+    fileNotes = context.globalState.get('fileNotes', []);
 
-  // Watch for configuration changes
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("clibbits.snippets")) {
-        loadSnippets(context);
-        vscode.window.showInformationMessage(
-          "Clibbits snippets have been updated from settings."
-        );
-      }
-    })
-  );
+    const fileNotesProvider = new FileNotesProvider();
+    const fileSystemProvider = new FileSystemProvider();
 
-  // Helper function to register a command only if it doesn't already exist
-  async function registerCommandOnce(commandId: string, callback: (...args: any[]) => any) {
-    if (await vscode.commands.getCommands().then(commands => !commands.includes(commandId))) {
-      let disposable = vscode.commands.registerCommand(commandId, callback);
-      context.subscriptions.push(disposable);
-    } else {
-      log(`Command ${commandId} already registered, skipping.`);
-    }
-  }
+    vscode.window.registerTreeDataProvider('clibbitsNotesExplorer', fileNotesProvider);
+    context.subscriptions.push(vscode.workspace.registerFileSystemProvider('clibbits', fileSystemProvider, { isCaseSensitive: true }));
 
-  // Register commands using the helper function
-  registerCommandOnce("clibbits.openSnippetMenu", async () => {
-    try {
-      if (snippets.length === 0) {
-        vscode.window.showInformationMessage(
-          'No snippets available. Add some in the settings.json file under "clibbits.snippets"!'
-        );
-        return;
-      }
+    const addNoteCommand = vscode.commands.registerCommand('clibbits.addNote', async () => {
+        const activeEditor = vscode.window.activeTextEditor;
+        let defaultFileName = activeEditor ? path.basename(activeEditor.document.fileName) : '';
+        
+        const fileName = await vscode.window.showInputBox({ 
+            prompt: 'Enter file name',
+            value: defaultFileName
+        });
+        if (!fileName) return;
 
-      // Sort snippets by usage count
-      snippets.sort((a, b) => b.usageCount - a.usageCount);
+        const content = await vscode.window.showInputBox({ prompt: 'Enter note content' });
+        if (!content) return;
 
-      const snippetOptions = snippets.map((s) => s.name);
-      const selected = await vscode.window.showQuickPick(snippetOptions, {
-        placeHolder: "Select a snippet to copy",
-      });
+        const newNote: FileNote = {
+            id: Date.now().toString(),
+            fileName,
+            content,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
 
-      if (selected) {
-        const snippet = snippets.find((s) => s.name === selected);
-        if (snippet) {
-          await vscode.env.clipboard.writeText(snippet.snippet);
-          vscode.window.showInformationMessage(
-            `Copied "${selected}" snippet to clipboard.`
-          );
-          log(`Snippet "${selected}" copied to clipboard.`);
+        fileNotes.push(newNote);
+        await context.globalState.update('fileNotes', fileNotes);
+        fileNotesProvider.refresh();
+    });
 
-          // Update usage statistics
-          snippet.usageCount++;
-          snippet.lastUsed = Date.now();
+    const deleteNoteCommand = vscode.commands.registerCommand('clibbits.deleteNote', async (note: FileNote) => {
+        fileNotes = fileNotes.filter(n => n.id !== note.id);
+        await context.globalState.update('fileNotes', fileNotes);
+        fileNotesProvider.refresh();
+    });
 
-          const usageStats: { [key: string]: { count: number; lastUsed?: number } } =
-            context.globalState.get("clibbitsUsageStats") || {};
-          usageStats[snippet.name] = {
-            count: snippet.usageCount,
-            lastUsed: snippet.lastUsed,
-          };
-          await context.globalState.update("clibbitsUsageStats", usageStats);
+    const editNoteCommand = vscode.commands.registerCommand('clibbits.editNote', async (note: FileNote) => {
+        const newContent = await vscode.window.showInputBox({ prompt: 'Edit note content', value: note.content });
+        if (newContent && newContent !== note.content) {
+            note.content = newContent;
+            note.updatedAt = Date.now();
+            await context.globalState.update('fileNotes', fileNotes);
+            fileNotesProvider.refresh();
         }
-      }
-    } catch (error) {
-      log(`Error in openSnippetMenu command: ${error}`);
-      vscode.window.showErrorMessage(`Error copying snippet: ${error}`);
-    }
-  });
-
-  registerCommandOnce("clibbits.addSnippet", async () => {
-    const name = await vscode.window.showInputBox({
-      prompt: "Enter snippet name",
-    });
-    if (!name) return;
-
-    const snippet = await vscode.window.showInputBox({
-      prompt: "Enter snippet content",
-    });
-    if (!snippet) return;
-
-    await addSnippet(context, name, snippet);
-  });
-
-  registerCommandOnce("clibbits.saveAsSnippet", async () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      vscode.window.showErrorMessage("No active text editor found.");
-      return;
-    }
-
-    const selection = editor.selection;
-    const selectedText = editor.document.getText(selection);
-
-    if (!selectedText) {
-      vscode.window.showErrorMessage("No text selected.");
-      return;
-    }
-
-    const name = await vscode.window.showInputBox({
-      prompt: "Enter a name for this snippet",
     });
 
-    if (!name) return;
+    const viewNoteCommand = vscode.commands.registerCommand('clibbits.viewNote', (note: FileNote) => {
+        const uri = vscode.Uri.parse(`clibbits:/${note.id}`);
+        vscode.workspace.openTextDocument(uri).then(doc => {
+            vscode.window.showTextDocument(doc, { preview: false, viewColumn: vscode.ViewColumn.Beside });
+        });
+    });
 
-    await addSnippet(context, name, selectedText);
-  });
+    context.subscriptions.push(addNoteCommand, deleteNoteCommand, editNoteCommand, viewNoteCommand);
 
-  registerCommandOnce("clibbits.showStats", async () => {
-    const panel = vscode.window.createWebviewPanel(
-      "clibbitsStats",
-      "Clibbits Snippet Statistics",
-      vscode.ViewColumn.One,
-      {}
-    );
+    // Refresh the tree view when the active editor changes
+    vscode.window.onDidChangeActiveTextEditor(() => {
+        fileNotesProvider.refresh();
+    });
 
-    const statsHtml = getStatsHtml(snippets);
-    panel.webview.html = statsHtml;
-  });
-
-  log("Clibbits extension activation completed.");
+    // Listen for text document save events
+    vscode.workspace.onDidSaveTextDocument(document => {
+        if (document.uri.scheme === 'clibbits') {
+            context.globalState.update('fileNotes', fileNotes);
+            fileNotesProvider.refresh();
+        }
+    });
 }
 
-function getStatsHtml(snippets: Snippet[]): string {
-  const sortedSnippets = [...snippets].sort(
-    (a, b) => b.usageCount - a.usageCount
-  );
-  const snippetRows = sortedSnippets
-    .map(
-      (s) => `
-        <tr>
-            <td>${s.name}</td>
-            <td>${s.usageCount}</td>
-            <td>${
-              s.lastUsed ? new Date(s.lastUsed).toLocaleString() : "Never"
-            }</td>
-        </tr>
-    `
-    )
-    .join("");
-
-  return `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Clibbits Snippet Statistics</title>
-            <style>
-                body { font-family: Arial, sans-serif; padding: 20px; }
-                table { border-collapse: collapse; width: 100%; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                th { background-color: #f2f2f2; }
-                tr:nth-child(even) { background-color: #AEAEAE; }
-            </style>
-        </head>
-        <body>
-            <h1>Clibbits Snippet Statistics</h1>
-            <table>
-                <tr>
-                    <th>Snippet Name</th>
-                    <th>Usage Count</th>
-                    <th>Last Used</th>
-                </tr>
-                ${snippetRows}
-            </table>
-        </body>
-        </html>
-    `;
-}
-
-export function deactivate() {
-  log("Clibbits extension is being deactivated.");
-}
+export function deactivate() {}

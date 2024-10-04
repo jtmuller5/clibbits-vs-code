@@ -1,20 +1,51 @@
-// See https://go.microsoft.com/fwlink/?LinkId=733558
-// for the documentation about the tasks.json format
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
-			"presentation": {
-				"reveal": "never"
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Package Extension",
+      "type": "shell",
+      "command": "vsce",
+      "args": ["package"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Publish Package",
+      "type": "shell",
+      "command": "vsce",
+      "args": ["publish", "${input:versionType}"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Show Package Stats",
+      "type": "shell",
+      "command": "vsce",
+      "args": ["show", "CodeontheRocks.clibbits"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    }
+  ],
+  "inputs": [
+	{
+		"id": "versionType",
+		"type": "pickString",
+		"options": [
+			"major",
+			"minor",
+			"patch"
+		],
+		"default": "minor",
+		"description": "Select the version type to publish"
+	}
+  ]
 }
