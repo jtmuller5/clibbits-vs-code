@@ -2,7 +2,7 @@
   "name": "clibbits",
   "displayName": "Clibbits",
   "description": "Copy contents of files to clipboard",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
   "repository": {
