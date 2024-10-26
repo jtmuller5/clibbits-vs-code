@@ -2,7 +2,7 @@
   "name": "clibbits",
   "displayName": "Clibbits",
   "description": "Copy contents of files to clipboard",
-  "version": "0.6.0",
+  "version": "1.6.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
   "repository": {
@@ -55,6 +55,11 @@
         {
           "command": "clibbits.copyCodeBlock",
           "group": "navigation@2",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "clibbits.copyAllFiles",
+          "group": "navigation@3",
           "when": "editorTextFocus"
         }
       ]
