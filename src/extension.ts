@@ -3,6 +3,7 @@ import {
   CopyAllFilesCommand,
   CopyCodeBlockCommand,
   CopyFileCommand,
+  CopyFolderRecursiveCommand,
 } from "./commands";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -11,7 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     CopyAllFilesCommand.register(context),
     CopyFileCommand.register(context),
-    CopyCodeBlockCommand.register(context)
+    CopyCodeBlockCommand.register(context),
+    CopyFolderRecursiveCommand.register(context)  // Add this line
   );
 }
 

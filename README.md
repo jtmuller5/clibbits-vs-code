@@ -26,6 +26,13 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - Or use the keyboard shortcut `Ctrl+Shift+B` (Windows/Linux) or `Cmd+Shift+B` (Mac)
 - The entire code block will be copied to your clipboard
 
+### 📁 Copy Folder Contents
+- Right-click any folder in the explorer
+- Select "Clibbits: Copy Folder Contents to Clipboard"
+- All text files in the folder and its subfolders will be copied recursively
+- Files are organized with clear separators and relative paths
+- System folders (like node_modules, .git) are automatically excluded
+
 ## File Format
 
 ### Single File
@@ -109,21 +116,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 If you encounter any problems or have suggestions, please open an issue on the [GitHub repository](https://github.com/jtmuller5/clibbits).
-
-## Release Notes
-
-### 0.6.0
-- Added support for copying code blocks (functions, classes, etc.)
-- Added keyboard shortcut for copying code blocks
-- Added visual feedback when copying code blocks
-
-### 0.5.0
-- Complete redesign of the extension
-- Added support for copying multiple selected files
-- Added support for copying all open files
-- Added keyboard shortcuts
-- Added file separators for multiple file copying
-- Added size limit protection (5MB)
 
 ---
 

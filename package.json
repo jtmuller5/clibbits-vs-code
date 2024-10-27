@@ -1,6 +1,6 @@
 {
   "name": "clibbits",
-  "displayName": "Clibbits",
+  "displayName": "Clibbits: Copy Code For AI",
   "description": "Copy contents of files to clipboard",
   "version": "2.0.0",
   "publisher": "CodeontheRocks",
@@ -36,6 +36,11 @@
         "command": "clibbits.copyCodeBlock",
         "title": "Clibbits: Copy Code Block to Clipboard",
         "icon": "$(copy)"
+      },
+      {
+        "command": "clibbits.copyFolderRecursive",
+        "title": "Clibbits: Copy Folder Contents to Clipboard",
+        "icon": "$(copy)"
       }
     ],
     "menus": {
@@ -43,7 +48,12 @@
         {
           "command": "clibbits.copyFile",
           "group": "navigation@1",
-          "when": "explorerViewletVisible"
+          "when": "explorerViewletVisible && !explorerResourceIsFolder"
+        },
+        {
+          "command": "clibbits.copyFolderRecursive",
+          "group": "navigation@1",
+          "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
