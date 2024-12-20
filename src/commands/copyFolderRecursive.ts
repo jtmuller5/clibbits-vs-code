@@ -7,14 +7,14 @@ export class CopyFolderRecursiveCommand {
 
     private static async collectFiles(folderPath: string, excludePatterns: RegExp[] = []): Promise<string[]> {
         const results: string[] = [];
-        
+
         try {
             const files = await fs.promises.readdir(folderPath);
-            
+
             for (const file of files) {
                 const fullPath = path.join(folderPath, file);
                 const stats = await fs.promises.stat(fullPath);
-                
+
                 // Skip files/folders that match exclude patterns
                 if (excludePatterns.some(pattern => pattern.test(fullPath))) {
                     continue;
@@ -28,7 +28,7 @@ export class CopyFolderRecursiveCommand {
                     // Only include text files
                     const ext = path.extname(file).toLowerCase();
                     const isTextFile = !['.exe', '.dll', '.jpg', '.png', '.gif', '.ico', '.bin'].includes(ext);
-                    
+
                     if (isTextFile) {
                         results.push(fullPath);
                     }
@@ -75,7 +75,7 @@ export class CopyFolderRecursiveCommand {
                     }, async (progress) => {
                         // Collect all valid file paths
                         const filePaths = await this.collectFiles(uri.fsPath, excludePatterns);
-                        
+
                         if (filePaths.length === 0) {
                             vscode.window.showInformationMessage('No text files found in the selected folder.');
                             return;
@@ -88,7 +88,10 @@ export class CopyFolderRecursiveCommand {
                         for (const filePath of filePaths) {
                             try {
                                 const content = await fs.promises.readFile(filePath, 'utf8');
-                                const relativePath = path.relative(uri.fsPath, filePath);
+                                const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+                                const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                                // Derive relative path from the workspace root
+                                const relativePath = rootPath ? path.relative(rootPath, filePath) : path.relative(uri.fsPath, filePath);
 
                                 // Add separator between files
                                 if (processedFiles > 0) {

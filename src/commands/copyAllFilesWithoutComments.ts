@@ -23,7 +23,7 @@ export class CopyAllFilesWithoutCommentsCommand {
         let withoutComments = withoutMultiLineComments.replace(/\/\/.*/g, '');
 
         // Restore strings
-        withoutComments = withoutComments.replace(/__STRING_(\d+)__/g, (_, index) => 
+        withoutComments = withoutComments.replace(/__STRING_(\d+)__/g, (_, index) =>
             stringPlaceholders[parseInt(index)]
         );
 
@@ -55,9 +55,11 @@ export class CopyAllFilesWithoutCommentsCommand {
                 for (const uri of openEditors) {
                     try {
                         const document = await vscode.workspace.openTextDocument(uri);
-                        const fileName = path.basename(document.fileName);
+                        const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                        const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                        const relativePath = rootPath ? path.relative(rootPath, document.fileName) : path.basename(document.fileName);
                         const contentWithoutComments = this.removeComments(document.getText());
-                        
+
                         // Skip files that become empty after removing comments
                         if (!contentWithoutComments.trim()) {
                             continue;
@@ -69,7 +71,7 @@ export class CopyAllFilesWithoutCommentsCommand {
                         }
 
                         combinedContent += `${'='.repeat(80)}\n`;
-                        combinedContent += `File: ${fileName}\n`;
+                        combinedContent += `File: ${relativePath}\n`;
                         combinedContent += `${'='.repeat(80)}\n\n`;
                         combinedContent += contentWithoutComments;
 

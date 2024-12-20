@@ -21,15 +21,18 @@ export class CopyAllFilesCommand {
 
                 for (const uri of openEditors) {
                     const document = await vscode.workspace.openTextDocument(uri);
-                    const fileName = path.basename(document.fileName);
-                    
-                    combinedContent += `\n=== ${fileName} ===\n\n`;
+                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                    const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                    const relativePath = rootPath ? path.relative(rootPath, document.fileName) : path.basename(document.fileName);
+
+                    // Use relativePath instead of just fileName
+                    combinedContent += `\n=== ${relativePath} ===\n\n`;
                     combinedContent += document.getText();
                     combinedContent += '\n\n';
                 }
 
                 await vscode.env.clipboard.writeText(combinedContent);
-                
+
                 vscode.window.showInformationMessage(
                     `Successfully copied content from ${openEditors.length} file(s) to clipboard.`
                 );

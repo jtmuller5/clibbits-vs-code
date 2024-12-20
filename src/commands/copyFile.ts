@@ -14,7 +14,7 @@ export class CopyFileCommand {
                     // Check if this is a multi-selection context menu action
                     if (selectedFiles && Array.isArray(selectedFiles)) {
                         urisToProcess = selectedFiles;
-                    } 
+                    }
                     // Single file from explorer context menu
                     else if (uri) {
                         urisToProcess = [uri];
@@ -37,18 +37,20 @@ export class CopyFileCommand {
                         try {
                             const document = await vscode.workspace.openTextDocument(fileUri);
                             const content = document.getText();
-                            const fileName = path.basename(fileUri.fsPath);
-                            
+
                             // Add file separator if this isn't the first file
                             if (successfulCopies > 0) {
                                 combinedContent += '\n\n';
                             }
 
-                            // Only add headers if there are multiple files
+                            const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+                            const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                            const relativePath = rootPath ? path.relative(rootPath, fileUri.fsPath) : path.basename(fileUri.fsPath);
+
                             if (urisToProcess.length > 1) {
-                                combinedContent += `=== ${fileName} ===\n\n`;
+                                combinedContent += `=== ${relativePath} ===\n\n`;
                             }
-                            
+
                             combinedContent += content;
                             successfulCopies++;
                             totalSize += content.length;
@@ -66,11 +68,11 @@ export class CopyFileCommand {
 
                     if (successfulCopies > 0) {
                         await vscode.env.clipboard.writeText(combinedContent);
-                        
+
                         const message = successfulCopies === 1
                             ? `Successfully copied contents of ${path.basename(urisToProcess[0].fsPath)} to clipboard.`
                             : `Successfully copied contents of ${successfulCopies} files to clipboard.`;
-                        
+
                         vscode.window.showInformationMessage(message);
                     }
                 } catch (error) {

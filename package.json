@@ -24,7 +24,7 @@
     "commands": [
       {
         "command": "clibbits.copyAllFiles",
-        "title": "Clibbits: Copy All Open Files to Clipboard",
+        "title": "Copy Open Files for AI",
         "icon": {
           "light": "./resources/light/file-stack.svg",
           "dark": "./resources/dark/file-stack.svg"
@@ -40,20 +40,20 @@
       },
       {
         "command": "clibbits.copyFile",
-        "title": "Clibbits: Copy File Contents to Clipboard",
+        "title": "Copy for AI",
         "icon": {
-          "light": "./resources/light/copy.svg",
-          "dark": "./resources/dark/copy.svg"
+          "light": "./resources/light/file-stack.svg",
+          "dark": "./resources/dark/file-stack.svg"
         }
       },
       {
         "command": "clibbits.copyCodeBlock",
-        "title": "Clibbits: Copy Code Block to Clipboard",
+        "title": "Copy Code Block for AI",
         "icon": "$(copy)"
       },
       {
         "command": "clibbits.copyFolderRecursive",
-        "title": "Clibbits: Copy Folder Contents to Clipboard",
+        "title": "Copy for AI",
         "icon": "$(copy)"
       },
       {
@@ -69,19 +69,19 @@
       "explorer/context": [
         {
           "command": "clibbits.copyFile",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "explorerViewletVisible && !explorerResourceIsFolder"
         },
         {
           "command": "clibbits.copyFolderRecursive",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
         {
           "command": "clibbits.copyFile",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
         {
@@ -91,15 +91,16 @@
         },
         {
           "command": "clibbits.copyCodeBlock",
-          "group": "navigation@2",
+          "group": "5_cutcopypaste",
           "when": "editorTextFocus"
         },
         {
           "command": "clibbits.copyAllFiles",
-          "group": "navigation@3",
+          "group": "5_cutcopypaste",
           "when": "editorTextFocus"
         }
-      ],"editor/title": [
+      ],
+      "editor/title": [
         {
           "command": "clibbits.copyAllFiles",
           "when": "editorIsOpen",
