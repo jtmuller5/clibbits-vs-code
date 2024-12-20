@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyFileCommand {
     public static readonly commandName = 'clibbits.copyFile';
@@ -29,7 +30,7 @@ export class CopyFileCommand {
                         return;
                     }
 
-                    let combinedContent = '';
+                    const contentBuilder: string[] = [];
                     let successfulCopies = 0;
                     let totalSize = 0;
 
@@ -40,18 +41,19 @@ export class CopyFileCommand {
 
                             // Add file separator if this isn't the first file
                             if (successfulCopies > 0) {
-                                combinedContent += '\n\n';
+                                contentBuilder.push('\n\n');
                             }
 
                             const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
                             const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
                             const relativePath = rootPath ? path.relative(rootPath, fileUri.fsPath) : path.basename(fileUri.fsPath);
 
-                            if (urisToProcess.length > 1) {
-                                combinedContent += `=== ${relativePath} ===\n\n`;
-                            }
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push(`File: ${relativePath}\n`);
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push("\n");
+                            contentBuilder.push(content);
 
-                            combinedContent += content;
                             successfulCopies++;
                             totalSize += content.length;
 
@@ -67,7 +69,7 @@ export class CopyFileCommand {
                     }
 
                     if (successfulCopies > 0) {
-                        await vscode.env.clipboard.writeText(combinedContent);
+                        await vscode.env.clipboard.writeText(contentBuilder.join(''));
 
                         const message = successfulCopies === 1
                             ? `Successfully copied contents of ${path.basename(urisToProcess[0].fsPath)} to clipboard.`

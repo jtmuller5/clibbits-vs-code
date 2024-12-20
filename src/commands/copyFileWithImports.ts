@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
+import { FILE_HEADER_DECORATION } from "../utils";
 
 export class CopyWithImportsCommand {
   public static readonly commandName = "clibbits.copyWithImports";
@@ -38,7 +39,7 @@ export class CopyWithImportsCommand {
             },
             async (progress) => {
               let totalProcessed = 0;
-              let combinedContent = "";
+              const contentBuilder: string[] = [];
               let totalSize = 0;
 
               for (const fileUri of urisToProcess) {
@@ -56,13 +57,14 @@ export class CopyWithImportsCommand {
 
                     // Add separator between files
                     if (totalProcessed > 0) {
-                      combinedContent += "\n";
+                      contentBuilder.push("\n");
                     }
 
-                    combinedContent += `${"=".repeat(80)}\n`;
-                    combinedContent += `// File: ${relativePath}\n`;
-                    combinedContent += `${"=".repeat(80)}\n\n`;
-                    combinedContent += `${file.content}\n`;
+                    contentBuilder.push(FILE_HEADER_DECORATION);
+                    contentBuilder.push(`File: ${relativePath}\n`);
+                    contentBuilder.push(FILE_HEADER_DECORATION);
+                    contentBuilder.push("\n");
+                    contentBuilder.push(file.content);
 
                     totalProcessed++;
                     totalSize += file.content.length;
@@ -87,6 +89,7 @@ export class CopyWithImportsCommand {
               }
 
               if (totalProcessed > 0) {
+                const combinedContent = contentBuilder.join("");
                 await vscode.env.clipboard.writeText(combinedContent);
 
                 const message =

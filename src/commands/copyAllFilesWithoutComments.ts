@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyAllFilesWithoutCommentsCommand {
     public static readonly commandName = 'clibbits.copyAllFilesWithoutComments';
@@ -48,11 +49,12 @@ export class CopyAllFilesWithoutCommentsCommand {
             }
 
             try {
-                let combinedContent = '';
+                const contentBuilder: string[] = [];
                 let processedFiles = 0;
                 let totalSize = 0;
 
                 for (const uri of openEditors) {
+
                     try {
                         const document = await vscode.workspace.openTextDocument(uri);
                         const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
@@ -65,15 +67,12 @@ export class CopyAllFilesWithoutCommentsCommand {
                             continue;
                         }
 
-                        // Add separator between files
-                        if (processedFiles > 0) {
-                            combinedContent += '\n\n';
-                        }
-
-                        combinedContent += `${'='.repeat(80)}\n`;
-                        combinedContent += `File: ${relativePath}\n`;
-                        combinedContent += `${'='.repeat(80)}\n\n`;
-                        combinedContent += contentWithoutComments;
+                        contentBuilder.push(FILE_HEADER_DECORATION);
+                        contentBuilder.push(`File: ${relativePath}\n`);
+                        contentBuilder.push(FILE_HEADER_DECORATION);
+                        contentBuilder.push("\n");
+                        contentBuilder.push(contentWithoutComments);
+                        contentBuilder.push('\n\n');
 
                         processedFiles++;
                         totalSize += contentWithoutComments.length;
@@ -92,6 +91,7 @@ export class CopyAllFilesWithoutCommentsCommand {
                 }
 
                 if (processedFiles > 0) {
+                    const combinedContent = contentBuilder.join('');
                     await vscode.env.clipboard.writeText(combinedContent);
                     vscode.window.showInformationMessage(
                         `Successfully copied content from ${processedFiles} file(s) to clipboard (comments removed).`

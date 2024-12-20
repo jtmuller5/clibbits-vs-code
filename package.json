@@ -32,7 +32,7 @@
       },
       {
         "command": "clibbits.copyAllFilesWithoutComments",
-        "title": "Clibbits: Copy All Open Files Without Comments to Clipboard",
+        "title": "Copy All Open Files Without Comments to Clipboard",
         "icon": {
           "light": "./resources/light/copy-minus.svg",
           "dark": "./resources/dark/copy-minus.svg"
@@ -41,6 +41,14 @@
       {
         "command": "clibbits.copyFile",
         "title": "Copy for AI",
+        "icon": {
+          "light": "./resources/light/file-stack.svg",
+          "dark": "./resources/dark/file-stack.svg"
+        }
+      },
+      {
+        "command": "clibbits.copyFileEditor",
+        "title": "Copy File for AI",
         "icon": {
           "light": "./resources/light/file-stack.svg",
           "dark": "./resources/dark/file-stack.svg"
@@ -58,7 +66,7 @@
       },
       {
         "command": "clibbits.copyWithoutComments",
-        "title": "Clibbits: Copy Without Comments",
+        "title": "Copy Without Comments",
         "icon": {
           "light": "./resources/light/copy-minus.svg",
           "dark": "./resources/dark/copy-minus.svg"
@@ -80,19 +88,19 @@
       ],
       "editor/context": [
         {
-          "command": "clibbits.copyFile",
+          "command": "clibbits.copyFileEditor",
           "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
         {
           "command": "clibbits.copyWithoutComments",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
         {
           "command": "clibbits.copyCodeBlock",
           "group": "5_cutcopypaste",
-          "when": "editorTextFocus"
+          "when": "editorHasSelection"
         },
         {
           "command": "clibbits.copyAllFiles",
@@ -104,19 +112,19 @@
         {
           "command": "clibbits.copyAllFiles",
           "when": "editorIsOpen",
-          "group": "navigation",
+          "group": "5_cutcopypaste",
           "order": 2
         },
         {
           "command": "clibbits.copyFile",
           "when": "editorIsOpen",
-          "group": "navigation",
+          "group": "5_cutcopypaste",
           "order": 1
         },
         {
           "command": "clibbits.copyWithoutComments",
           "when": "editorIsOpen",
-          "group": "navigation",
+          "group": "5_cutcopypaste",
           "order": 1
         }
       ]

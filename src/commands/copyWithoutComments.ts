@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyWithoutCommentsCommand {
     public static readonly commandName = 'clibbits.copyWithoutComments';
@@ -69,7 +70,7 @@ export class CopyWithoutCommentsCommand {
                         return;
                     }
 
-                    let combinedContent = '';
+                    const contentBuilder: string[] = [];
                     let successfulCopies = 0;
                     let totalSize = 0;
 
@@ -83,15 +84,14 @@ export class CopyWithoutCommentsCommand {
 
                             // Add file separator if this isn't the first file
                             if (successfulCopies > 0) {
-                                combinedContent += '\n\n';
+                                contentBuilder.push('\n');
                             }
 
-                            // Only add headers if there are multiple files
-                            if (urisToProcess.length > 1) {
-                                combinedContent += `=== ${relativePath} ===\n\n`;
-                            }
-
-                            combinedContent += contentWithoutComments;
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push(`File: ${relativePath}\n`);
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push("\n");
+                            contentBuilder.push(contentWithoutComments);
                             successfulCopies++;
                             totalSize += contentWithoutComments.length;
 
@@ -107,6 +107,7 @@ export class CopyWithoutCommentsCommand {
                     }
 
                     if (successfulCopies > 0) {
+                        const combinedContent = contentBuilder.join('');
                         await vscode.env.clipboard.writeText(combinedContent);
 
                         const message = successfulCopies === 1
