@@ -9,6 +9,13 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - Select "Clibbits: Copy File Contents to Clipboard"
 - The entire contents of the file will be copied to your clipboard
 
+### 🗑️ Copy Without Comments
+- Right-click in the editor or use the title bar icon
+- Select "Clibbits: Copy Without Comments"
+- The file contents will be copied with all comments removed
+- Both single-line (//) and block comments (/* */) are removed
+- Empty lines left by removed comments are cleaned up
+
 ### 📚 Copy Multiple Selected Files
 - Select multiple files in the explorer (using Ctrl/Cmd + Click or Shift + Click)
 - Right-click on any selected file

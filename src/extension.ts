@@ -4,7 +4,9 @@ import {
   CopyCodeBlockCommand,
   CopyFileCommand,
   CopyFolderRecursiveCommand,
+  CopyWithoutCommentsCommand,
 } from "./commands";
+import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("Activating Clibbits extension");
@@ -13,7 +15,9 @@ export function activate(context: vscode.ExtensionContext) {
     CopyAllFilesCommand.register(context),
     CopyFileCommand.register(context),
     CopyCodeBlockCommand.register(context),
-    CopyFolderRecursiveCommand.register(context)  // Add this line
+    CopyFolderRecursiveCommand.register(context),
+    CopyWithoutCommentsCommand.register(context),
+    CopyAllFilesWithoutCommentsCommand.register(context)
   );
 }
 

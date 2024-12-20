@@ -2,7 +2,7 @@
   "name": "clibbits",
   "displayName": "Clibbits: Copy Code For AI",
   "description": "Copy contents of files to clipboard",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
   "repository": {
@@ -25,12 +25,26 @@
       {
         "command": "clibbits.copyAllFiles",
         "title": "Clibbits: Copy All Open Files to Clipboard",
-        "icon": "$(copy)"
+        "icon": {
+          "light": "./resources/light/file-stack.svg",
+          "dark": "./resources/dark/file-stack.svg"
+        }
+      },
+      {
+        "command": "clibbits.copyAllFilesWithoutComments",
+        "title": "Clibbits: Copy All Open Files Without Comments to Clipboard",
+        "icon": {
+          "light": "./resources/light/copy-minus.svg",
+          "dark": "./resources/dark/copy-minus.svg"
+        }
       },
       {
         "command": "clibbits.copyFile",
         "title": "Clibbits: Copy File Contents to Clipboard",
-        "icon": "$(copy)"
+        "icon": {
+          "light": "./resources/light/copy.svg",
+          "dark": "./resources/dark/copy.svg"
+        }
       },
       {
         "command": "clibbits.copyCodeBlock",
@@ -41,6 +55,14 @@
         "command": "clibbits.copyFolderRecursive",
         "title": "Clibbits: Copy Folder Contents to Clipboard",
         "icon": "$(copy)"
+      },
+      {
+        "command": "clibbits.copyWithoutComments",
+        "title": "Clibbits: Copy Without Comments",
+        "icon": {
+          "light": "./resources/light/copy-minus.svg",
+          "dark": "./resources/dark/copy-minus.svg"
+        }
       }
     ],
     "menus": {
@@ -63,6 +85,11 @@
           "when": "resourceScheme == file"
         },
         {
+          "command": "clibbits.copyWithoutComments",
+          "group": "navigation@1",
+          "when": "resourceScheme == file"
+        },
+        {
           "command": "clibbits.copyCodeBlock",
           "group": "navigation@2",
           "when": "editorTextFocus"
@@ -71,6 +98,25 @@
           "command": "clibbits.copyAllFiles",
           "group": "navigation@3",
           "when": "editorTextFocus"
+        }
+      ],"editor/title": [
+        {
+          "command": "clibbits.copyAllFiles",
+          "when": "editorIsOpen",
+          "group": "navigation",
+          "order": 2
+        },
+        {
+          "command": "clibbits.copyFile",
+          "when": "editorIsOpen",
+          "group": "navigation",
+          "order": 1
+        },
+        {
+          "command": "clibbits.copyWithoutComments",
+          "when": "editorIsOpen",
+          "group": "navigation",
+          "order": 1
         }
       ]
     },
