@@ -63,6 +63,10 @@
           "light": "./resources/light/copy-minus.svg",
           "dark": "./resources/dark/copy-minus.svg"
         }
+      },
+      {
+        "command": "clibbits.copyTreeStructure",
+        "title": "Copy Tree Structure"
       }
     ],
     "menus": {
@@ -76,6 +80,11 @@
           "command": "clibbits.copyFolderRecursive",
           "group": "5_cutcopypaste",
           "when": "explorerResourceIsFolder"
+        },
+        {
+          "when": "explorerResourceIsFolder || resourceScheme == file",
+          "command": "clibbits.copyTreeStructure",
+          "group": "clibbits@1"
         }
       ],
       "editor/context": [

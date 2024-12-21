@@ -40,6 +40,33 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - Files are organized with clear separators and relative paths
 - System folders (like node_modules, .git) are automatically excluded
 
+### 🌳 Copy Tree Structure
+- Right-click any folder or file in the explorer
+- Select "Clibbits: Copy Tree Structure"
+- Creates an ASCII tree diagram showing the folder/file hierarchy
+- Directories are sorted first, followed by files (alphabetically within each group)
+- Each folder is marked with a trailing slash (/) for easy identification
+- System folders (like node_modules, .git) are automatically excluded
+- Perfect for documenting project structures or sharing folder organization in discussions
+
+#### Example Output
+
+```
+Structure of my-project:
+└── my-project/
+    ├── src/
+    │   ├── components/
+    │   │   ├── Button.tsx
+    │   │   └── Input.tsx
+    │   └── utils/
+    │       └── helpers.ts
+    ├── tests/
+    │   └── components/
+    │       └── Button.test.tsx
+    ├── package.json
+    └── tsconfig.json
+```
+
 ## File Format
 
 ### Single File

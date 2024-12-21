@@ -4,6 +4,7 @@ import {
   CopyCodeBlockCommand,
   CopyFileCommand,
   CopyFolderRecursiveCommand,
+  CopyTreeStructureCommand,
   CopyWithoutCommentsCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
@@ -17,7 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
     CopyCodeBlockCommand.register(context),
     CopyFolderRecursiveCommand.register(context),
     CopyWithoutCommentsCommand.register(context),
-    CopyAllFilesWithoutCommentsCommand.register(context)
+    CopyAllFilesWithoutCommentsCommand.register(context),
+    CopyTreeStructureCommand.register(context)
   );
 }
 
