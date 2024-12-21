@@ -2,7 +2,7 @@
   "name": "clibbits",
   "displayName": "Clibbits: Copy Code For AI",
   "description": "Copy contents of files to clipboard",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "publisher": "CodeontheRocks",
   "icon": "clibbits.png",
   "repository": {
