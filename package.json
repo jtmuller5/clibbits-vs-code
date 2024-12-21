@@ -42,16 +42,8 @@
         "command": "clibbits.copyFile",
         "title": "Copy for AI",
         "icon": {
-          "light": "./resources/light/file-stack.svg",
-          "dark": "./resources/dark/file-stack.svg"
-        }
-      },
-      {
-        "command": "clibbits.copyFileEditor",
-        "title": "Copy File for AI",
-        "icon": {
-          "light": "./resources/light/file-stack.svg",
-          "dark": "./resources/dark/file-stack.svg"
+          "light": "./resources/light/copy.svg",
+          "dark": "./resources/dark/copy.svg"
         }
       },
       {
@@ -88,7 +80,7 @@
       ],
       "editor/context": [
         {
-          "command": "clibbits.copyFileEditor",
+          "command": "clibbits.copyFile",
           "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
@@ -112,19 +104,19 @@
         {
           "command": "clibbits.copyAllFiles",
           "when": "editorIsOpen",
-          "group": "5_cutcopypaste",
+          "group": "navigation",
           "order": 2
         },
         {
           "command": "clibbits.copyFile",
           "when": "editorIsOpen",
-          "group": "5_cutcopypaste",
+          "group": "navigation",
           "order": 1
         },
         {
           "command": "clibbits.copyWithoutComments",
           "when": "editorIsOpen",
-          "group": "5_cutcopypaste",
+          "group": "navigation",
           "order": 1
         }
       ]
