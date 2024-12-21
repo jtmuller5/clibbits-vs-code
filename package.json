@@ -24,7 +24,7 @@
     "commands": [
       {
         "command": "clibbits.copyAllFiles",
-        "title": "Clibbits: Copy All Open Files to Clipboard",
+        "title": "Copy Open Files for AI",
         "icon": {
           "light": "./resources/light/file-stack.svg",
           "dark": "./resources/dark/file-stack.svg"
@@ -32,7 +32,7 @@
       },
       {
         "command": "clibbits.copyAllFilesWithoutComments",
-        "title": "Clibbits: Copy All Open Files Without Comments to Clipboard",
+        "title": "Copy All Open Files Without Comments to Clipboard",
         "icon": {
           "light": "./resources/light/copy-minus.svg",
           "dark": "./resources/dark/copy-minus.svg"
@@ -40,7 +40,7 @@
       },
       {
         "command": "clibbits.copyFile",
-        "title": "Clibbits: Copy File Contents to Clipboard",
+        "title": "Copy for AI",
         "icon": {
           "light": "./resources/light/copy.svg",
           "dark": "./resources/dark/copy.svg"
@@ -48,17 +48,17 @@
       },
       {
         "command": "clibbits.copyCodeBlock",
-        "title": "Clibbits: Copy Code Block to Clipboard",
+        "title": "Copy Code Block for AI",
         "icon": "$(copy)"
       },
       {
         "command": "clibbits.copyFolderRecursive",
-        "title": "Clibbits: Copy Folder Contents to Clipboard",
+        "title": "Copy for AI",
         "icon": "$(copy)"
       },
       {
         "command": "clibbits.copyWithoutComments",
-        "title": "Clibbits: Copy Without Comments",
+        "title": "Copy Without Comments",
         "icon": {
           "light": "./resources/light/copy-minus.svg",
           "dark": "./resources/dark/copy-minus.svg"
@@ -69,34 +69,34 @@
       "explorer/context": [
         {
           "command": "clibbits.copyFile",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "explorerViewletVisible && !explorerResourceIsFolder"
         },
         {
           "command": "clibbits.copyFolderRecursive",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
         {
           "command": "clibbits.copyFile",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
         {
           "command": "clibbits.copyWithoutComments",
-          "group": "navigation@1",
+          "group": "5_cutcopypaste",
           "when": "resourceScheme == file"
         },
         {
           "command": "clibbits.copyCodeBlock",
-          "group": "navigation@2",
-          "when": "editorTextFocus"
+          "group": "5_cutcopypaste",
+          "when": "editorHasSelection"
         },
         {
           "command": "clibbits.copyAllFiles",
-          "group": "navigation@3",
+          "group": "5_cutcopypaste",
           "when": "editorTextFocus"
         }
       ],

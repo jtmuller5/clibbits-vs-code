@@ -1,20 +1,21 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyFolderRecursiveCommand {
     public static readonly commandName = 'clibbits.copyFolderRecursive';
 
     private static async collectFiles(folderPath: string, excludePatterns: RegExp[] = []): Promise<string[]> {
         const results: string[] = [];
-        
+
         try {
             const files = await fs.promises.readdir(folderPath);
-            
+
             for (const file of files) {
                 const fullPath = path.join(folderPath, file);
                 const stats = await fs.promises.stat(fullPath);
-                
+
                 // Skip files/folders that match exclude patterns
                 if (excludePatterns.some(pattern => pattern.test(fullPath))) {
                     continue;
@@ -28,7 +29,7 @@ export class CopyFolderRecursiveCommand {
                     // Only include text files
                     const ext = path.extname(file).toLowerCase();
                     const isTextFile = !['.exe', '.dll', '.jpg', '.png', '.gif', '.ico', '.bin'].includes(ext);
-                    
+
                     if (isTextFile) {
                         results.push(fullPath);
                     }
@@ -75,30 +76,35 @@ export class CopyFolderRecursiveCommand {
                     }, async (progress) => {
                         // Collect all valid file paths
                         const filePaths = await this.collectFiles(uri.fsPath, excludePatterns);
-                        
+
                         if (filePaths.length === 0) {
                             vscode.window.showInformationMessage('No text files found in the selected folder.');
                             return;
                         }
 
-                        let combinedContent = '';
+                        const contentBuilder: string[] = [];
                         let processedFiles = 0;
                         let totalSize = 0;
 
                         for (const filePath of filePaths) {
                             try {
                                 const content = await fs.promises.readFile(filePath, 'utf8');
-                                const relativePath = path.relative(uri.fsPath, filePath);
+                                const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+                                const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                                // Derive relative path from the workspace root
+                                const relativePath = rootPath ? path.relative(rootPath, filePath) : path.relative(uri.fsPath, filePath);
 
                                 // Add separator between files
                                 if (processedFiles > 0) {
-                                    combinedContent += '\n';
+                                    contentBuilder.push('\n');
                                 }
 
-                                combinedContent += `${'='.repeat(80)}\n`;
-                                combinedContent += `File: ${relativePath}\n`;
-                                combinedContent += `${'='.repeat(80)}\n\n`;
-                                combinedContent += `${content}\n`;
+                                contentBuilder.push(FILE_HEADER_DECORATION);
+                                contentBuilder.push(`File: ${relativePath}\n`);
+                                contentBuilder.push(FILE_HEADER_DECORATION);
+                                contentBuilder.push("\n");
+                                contentBuilder.push(content);
+                                contentBuilder.push("\n");
 
                                 processedFiles++;
                                 totalSize += content.length;
@@ -122,6 +128,7 @@ export class CopyFolderRecursiveCommand {
                         }
 
                         if (processedFiles > 0) {
+                            const combinedContent = contentBuilder.join('');
                             await vscode.env.clipboard.writeText(combinedContent);
                             vscode.window.showInformationMessage(
                                 `Successfully copied contents of ${processedFiles} files from ${path.basename(uri.fsPath)}`

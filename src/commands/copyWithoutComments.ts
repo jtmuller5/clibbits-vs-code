@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyWithoutCommentsCommand {
     public static readonly commandName = 'clibbits.copyWithoutComments';
@@ -7,7 +8,7 @@ export class CopyWithoutCommentsCommand {
     private static removeComments(text: string): string {
         // Remove multi-line comments
         text = text.replace(/\/\*[\s\S]*?\*\//g, '');
-        
+
         // Remove single-line comments, being careful not to remove URLs in strings
         const lines = text.split('\n');
         const processedLines = lines.map(line => {
@@ -15,11 +16,11 @@ export class CopyWithoutCommentsCommand {
             let inString = false;
             let stringChar = '';
             let result = '';
-            
+
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 const nextChar = line[i + 1];
-                
+
                 // Handle string boundaries
                 if ((char === '"' || char === "'") && (i === 0 || line[i - 1] !== '\\')) {
                     if (!inString) {
@@ -29,15 +30,15 @@ export class CopyWithoutCommentsCommand {
                         inString = false;
                     }
                 }
-                
+
                 // Check for comment start
                 if (!inString && char === '/' && nextChar === '/') {
                     break; // Rest of the line is a comment
                 }
-                
+
                 result += char;
             }
-            
+
             return result;
         });
 
@@ -69,7 +70,7 @@ export class CopyWithoutCommentsCommand {
                         return;
                     }
 
-                    let combinedContent = '';
+                    const contentBuilder: string[] = [];
                     let successfulCopies = 0;
                     let totalSize = 0;
 
@@ -77,19 +78,20 @@ export class CopyWithoutCommentsCommand {
                         try {
                             const document = await vscode.workspace.openTextDocument(fileUri);
                             const contentWithoutComments = this.removeComments(document.getText());
-                            const fileName = path.basename(fileUri.fsPath);
-                            
+                            const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                            const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                            const relativePath = rootPath ? path.relative(rootPath, document.fileName) : path.basename(document.fileName);
+
                             // Add file separator if this isn't the first file
                             if (successfulCopies > 0) {
-                                combinedContent += '\n\n';
+                                contentBuilder.push('\n');
                             }
 
-                            // Only add headers if there are multiple files
-                            if (urisToProcess.length > 1) {
-                                combinedContent += `=== ${fileName} ===\n\n`;
-                            }
-                            
-                            combinedContent += contentWithoutComments;
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push(`File: ${relativePath}\n`);
+                            contentBuilder.push(FILE_HEADER_DECORATION);
+                            contentBuilder.push("\n");
+                            contentBuilder.push(contentWithoutComments);
                             successfulCopies++;
                             totalSize += contentWithoutComments.length;
 
@@ -105,12 +107,13 @@ export class CopyWithoutCommentsCommand {
                     }
 
                     if (successfulCopies > 0) {
+                        const combinedContent = contentBuilder.join('');
                         await vscode.env.clipboard.writeText(combinedContent);
-                        
+
                         const message = successfulCopies === 1
                             ? `Successfully copied contents of ${path.basename(urisToProcess[0].fsPath)} (without comments) to clipboard.`
                             : `Successfully copied contents of ${successfulCopies} files (without comments) to clipboard.`;
-                        
+
                         vscode.window.showInformationMessage(message);
                     }
                 } catch (error) {

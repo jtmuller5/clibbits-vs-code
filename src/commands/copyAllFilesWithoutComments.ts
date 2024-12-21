@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyAllFilesWithoutCommentsCommand {
     public static readonly commandName = 'clibbits.copyAllFilesWithoutComments';
@@ -23,7 +24,7 @@ export class CopyAllFilesWithoutCommentsCommand {
         let withoutComments = withoutMultiLineComments.replace(/\/\/.*/g, '');
 
         // Restore strings
-        withoutComments = withoutComments.replace(/__STRING_(\d+)__/g, (_, index) => 
+        withoutComments = withoutComments.replace(/__STRING_(\d+)__/g, (_, index) =>
             stringPlaceholders[parseInt(index)]
         );
 
@@ -48,30 +49,30 @@ export class CopyAllFilesWithoutCommentsCommand {
             }
 
             try {
-                let combinedContent = '';
+                const contentBuilder: string[] = [];
                 let processedFiles = 0;
                 let totalSize = 0;
 
                 for (const uri of openEditors) {
+
                     try {
                         const document = await vscode.workspace.openTextDocument(uri);
-                        const fileName = path.basename(document.fileName);
+                        const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                        const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                        const relativePath = rootPath ? path.relative(rootPath, document.fileName) : path.basename(document.fileName);
                         const contentWithoutComments = this.removeComments(document.getText());
-                        
+
                         // Skip files that become empty after removing comments
                         if (!contentWithoutComments.trim()) {
                             continue;
                         }
 
-                        // Add separator between files
-                        if (processedFiles > 0) {
-                            combinedContent += '\n\n';
-                        }
-
-                        combinedContent += `${'='.repeat(80)}\n`;
-                        combinedContent += `File: ${fileName}\n`;
-                        combinedContent += `${'='.repeat(80)}\n\n`;
-                        combinedContent += contentWithoutComments;
+                        contentBuilder.push(FILE_HEADER_DECORATION);
+                        contentBuilder.push(`File: ${relativePath}\n`);
+                        contentBuilder.push(FILE_HEADER_DECORATION);
+                        contentBuilder.push("\n");
+                        contentBuilder.push(contentWithoutComments);
+                        contentBuilder.push('\n\n');
 
                         processedFiles++;
                         totalSize += contentWithoutComments.length;
@@ -90,6 +91,7 @@ export class CopyAllFilesWithoutCommentsCommand {
                 }
 
                 if (processedFiles > 0) {
+                    const combinedContent = contentBuilder.join('');
                     await vscode.env.clipboard.writeText(combinedContent);
                     vscode.window.showInformationMessage(
                         `Successfully copied content from ${processedFiles} file(s) to clipboard (comments removed).`

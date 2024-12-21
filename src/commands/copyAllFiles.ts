@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { FILE_HEADER_DECORATION } from '../utils';
 
 export class CopyAllFilesCommand {
     public static readonly commandName = 'clibbits.copyAllFiles';
@@ -17,19 +18,27 @@ export class CopyAllFilesCommand {
             }
 
             try {
-                let combinedContent = '';
+                const contentBuilder: string[] = [];
 
                 for (const uri of openEditors) {
                     const document = await vscode.workspace.openTextDocument(uri);
-                    const fileName = path.basename(document.fileName);
-                    
-                    combinedContent += `\n=== ${fileName} ===\n\n`;
-                    combinedContent += document.getText();
-                    combinedContent += '\n\n';
+                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+                    const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : '';
+                    const relativePath = rootPath ? path.relative(rootPath, document.fileName) : path.basename(document.fileName);
+
+                    // Use relativePath instead of just fileName
+                    contentBuilder.push(FILE_HEADER_DECORATION);
+                    contentBuilder.push(`File: ${relativePath}\n`);
+                    contentBuilder.push(FILE_HEADER_DECORATION);
+                    contentBuilder.push("\n");
+                    contentBuilder.push(document.getText());
+                    contentBuilder.push('\n\n');
                 }
 
+                const combinedContent = contentBuilder.join('');
+
                 await vscode.env.clipboard.writeText(combinedContent);
-                
+
                 vscode.window.showInformationMessage(
                     `Successfully copied content from ${openEditors.length} file(s) to clipboard.`
                 );
