@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## Release Notes
 
+### 2.6.0
+- Added code fences to copied code blocks
+- Reduce length of document header
+
 ### 2.1.0
 - Added command to copy all files in folder
 - Added additional when clauses so commands are only available when applicable
