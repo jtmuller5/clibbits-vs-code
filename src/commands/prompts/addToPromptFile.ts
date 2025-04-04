@@ -57,21 +57,30 @@ export class AddToClibbitCommand {
           .indexOf(nextSectionMatch[0]);
 
         if (matchIndex >= 0) {
-          const nextSectionIndex = sectionIndex + (`## ${section}`.length);
+          const nextSectionIndex = sectionIndex + `## ${section}`.length;
           newContent =
             promptContent.slice(0, sectionIndex + `## ${section}`.length) +
             "\n" +
             content +
             promptContent.slice(nextSectionIndex);
         } else {
+          console.warn(
+            `No valid next section found after ${section}. Appending to the end.`
+          );
           // No valid next section found, just append to the end
-          newContent = promptContent + "\n\n" + content;
+          newContent = promptContent + "\n" + content;
         }
       } else {
+        console.warn(
+          `No next section found after ${section}. Appending to the end.`
+        );
         // No next section, just append to the end of the section
-        newContent = promptContent + "\n\n" + content;
+        newContent = promptContent + "\n" + content;
       }
     } else {
+      console.warn(
+        `Section ${section} not found. Adding a new section instead.`
+      );
       // Add a new section
       newContent = promptContent + `\n\n## ${section}\n\n` + content;
     }
@@ -183,15 +192,15 @@ export class AddToClibbitCommand {
       // First, ask the user if they want to add as reference or full text
       const ADD_AS_REFERENCE = "Add as Reference";
       const ADD_FULL_TEXT = "Add Full Text";
-      
+
       const addMode = await vscode.window.showQuickPick(
-        [ADD_AS_REFERENCE, ADD_FULL_TEXT], 
+        [ADD_AS_REFERENCE, ADD_FULL_TEXT],
         {
           placeHolder: "How would you like to add the file(s)?",
-          canPickMany: false
+          canPickMany: false,
         }
       );
-      
+
       if (!addMode) {
         return; // User cancelled
       }
@@ -255,10 +264,10 @@ export class AddToClibbitCommand {
                 const fileData = await fs.promises.readFile(filePath, "utf8");
                 const ext = path.extname(relativePath).substring(1); // Get extension without dot
                 const languageId = this.determineLanguageId(ext);
-                
+
                 fileContent += `### ${relativePath}\n\n\`\`\`${languageId}\n${fileData}\n\`\`\`\n\n`;
               }
-              
+
               progress.report({
                 message: `Processing file ${i + 1} of ${filesToProcess.length}`,
                 increment: 100 / filesToProcess.length,
@@ -280,12 +289,16 @@ export class AddToClibbitCommand {
             // Show success message
             const message =
               filesToProcess.length === 1
-                ? `Added ${isAddingReference ? "reference to" : "contents of"} ${path.basename(
-                    filesToProcess[0]
-                  )} in ${path.basename(promptFilePath)}`
-                : `Added ${isAddingReference ? "references to" : "contents of"} ${
-                    filesToProcess.length
-                  } files in ${path.basename(promptFilePath)}`;
+                ? `Added ${
+                    isAddingReference ? "reference to" : "contents of"
+                  } ${path.basename(filesToProcess[0])} in ${path.basename(
+                    promptFilePath
+                  )}`
+                : `Added ${
+                    isAddingReference ? "references to" : "contents of"
+                  } ${filesToProcess.length} files in ${path.basename(
+                    promptFilePath
+                  )}`;
 
             vscode.window.showInformationMessage(message);
 
@@ -332,7 +345,7 @@ export class AddToClibbitCommand {
       yaml: "yaml",
       yml: "yaml",
       xml: "xml",
-      md: "markdown"
+      md: "markdown",
     };
 
     return extensionMap[extension.toLowerCase()] || "plaintext";
