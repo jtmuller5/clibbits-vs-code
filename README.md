@@ -1,4 +1,14 @@
-# Clibbits
+#### Sharing Clibbits Between Projects
+- **Export Clibbit:**
+  - Use the Command Palette and select "Clibbits: Export Clibbit"
+  - Choose which clibbit to export from your workspace
+  - The clibbit will be saved to a shared location (in your home directory)
+
+- **Import Clibbit:**
+  - Use the Command Palette and select "Clibbits: Import Clibbit"
+  - Choose which clibbit to import from the shared location
+  - The clibbit will be copied to your workspace
+  - The imported clibbit will open automatically# Clibbits
 
 Clibbits is a Visual Studio Code extension that simplifies copying file contents to your clipboard. Whether you need to copy a single file, multiple selected files, all open files, or specific code blocks, Clibbits provides convenient commands to handle these operations efficiently. This extension was designed for working with LLMs that exist outside of VS Code.
 
@@ -59,22 +69,34 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - This creates a `.github/prompts/clibbits` folder in your workspace
 - Use "Clibbits: Create Clibbit" to create a new clibbit with a template
 
-#### Adding Code to Prompt Files
+#### Adding Code to Clibbits
 - **From Editor Selection:**
   - Select code in your editor
-  - **Option 1:** Right-click and select "Clibbits: Add to Prompt File"
-  - **Option 2:** Click the "Add to Prompt File" Code Lens that appears above your selection
-  - Choose which prompt file to add the code to from the dropdown menu
-  - The code is automatically added to the "Context" section of the prompt file
+  - **Option 1:** Right-click and select "Clibbits: Add to Clibbit"
+  - **Option 2:** Click the "Add selection to Clibbit" Code Lens that appears above your selection
+  - Choose which clibbit to add the code to from the dropdown menu
+  - The code is automatically added to the "Context" section of the clibbit
 
 - **From Explorer (Files or Folders):**
   - Right-click on any file or folder in the Explorer
-  - Select "Clibbits: Add to Prompt File"
-  - Choose which prompt file to add the files to
-  - File links will be added to the "Files" section of the prompt file
+  - Select "Clibbits: Add to Clibbit"
+  - Choose which clibbit to add the files to
+  - File links will be added to the "Files" section of the clibbit
   - For folders, links to all text files will be recursively added (up to a reasonable depth)
 
-#### Example Prompt File Structure
+#### Sharing Clibbits Between Projects
+- **Export Clibbit:**
+  - Use the Command Palette and select "Clibbits: Export Clibbit"
+  - Choose which clibbit to export from your workspace
+  - The clibbit will be saved to a shared location (in your home directory)
+
+- **Import Clibbit:**
+  - Use the Command Palette and select "Clibbits: Import Clibbit"
+  - Choose which clibbit to import from the shared location
+  - The clibbit will be copied to your workspace
+  - The imported clibbit will open automatically
+
+#### Example Clibbit Structure
 
 ```markdown
 # analytics
@@ -177,30 +199,32 @@ function example() {
    - "Copy File Contents to Clipboard" - Copies current file
    - "Copy All Open Files to Clipboard" - Copies all open files
    - "Copy Code Block to Clipboard" - Copies the current code block
-   - "Create Prompts Folder" - Creates the .github/prompts/clibbits folder
-   - "Create Prompt File" - Creates a new prompt file
-   - "Add to Prompt File" - Adds selected code to a prompt file
+   - "Create Clibbits Folder" - Creates the .github/prompts/clibbits folder
+   - "Create Clibbit" - Creates a new clibbit
+   - "Add to Clibbit" - Adds selected code to a clibbit
+   - "Export Clibbit" - Exports a clibbit to shared storage
+   - "Import Clibbit" - Imports a clibbit from shared storage
 
-## Using Prompt Files with GitHub Copilot
+## Using Clibbits with GitHub Copilot
 
-Clibbits helps you create and manage prompt files that can be used with GitHub Copilot to provide reusable instructions. Prompt files are structured with sections:
+Clibbits helps you create and manage reusable prompt files (clibbits) that can be used with GitHub Copilot to provide context. Clibbits are structured with sections:
 
-- **Description**: A brief overview of what this prompt file is for
-- **Instructions**: How the AI should use the prompt file
-- **Context**: Code snippets added by selecting code and using "Add to Prompt File"
+- **Description**: A brief overview of what this clibbit is for
+- **Instructions**: How the AI should use the clibbit
+- **Context**: Code snippets added by selecting code and using "Add to Clibbit"
 - **Files**: Links to relevant files added by right-clicking in Explorer
 - **References**: Additional documentation or resources
 
-After creating your prompt files:
+After creating your clibbits:
 
 1. Enable prompt files in VS Code:
    - Go to Settings and enable `chat.promptFiles`
    - Add `.github/prompts` to your `chat.promptFilesLocations` setting
 
-2. Use your prompt files with Copilot:
+2. Use your clibbits with Copilot:
    - In Copilot Chat, click the "Attach Context" icon (⌘/ or Ctrl+/)
    - Select "Prompt..."
-   - Choose your prompt file from the list
+   - Choose your clibbit from the list
    - Copilot will have access to all the code snippets and file links
 
 3. Learn more about prompt files in the [VS Code documentation](https://code.visualstudio.com/docs/copilot/copilot-customization#_reusable-prompt-files-experimental)

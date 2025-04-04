@@ -86,6 +86,16 @@
         "command": "clibbits.addToClibbit.file",
         "title": "Add to Clibbit",
         "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.exportClibbit",
+        "title": "Export Clibbit",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.importClibbit",
+        "title": "Import Clibbit",
+        "category": "Clibbits"
       }
     ],
     "menus": {
@@ -114,6 +124,16 @@
           "command": "clibbits.addToClibbit.file",
           "group": "clibbits@3",
           "when": "explorerResourceIsFolder || resourceScheme == file"
+        },
+        {
+          "command": "clibbits.exportClibbit",
+          "group": "clibbits@4",
+          "when": "workspaceFolderCount != 0"
+        },
+        {
+          "command": "clibbits.importClibbit",
+          "group": "clibbits@4",
+          "when": "workspaceFolderCount != 0"
         }
       ],
       "editor/context": [

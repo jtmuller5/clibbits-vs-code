@@ -9,6 +9,8 @@ import {
   CreateClibbitFolderCommand,
   CreateClibbitCommand,
   AddToClibbitCommand,
+  ExportClibbitCommand,
+  ImportClibbitCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 import { AddToClibbitCodeLensProvider } from "./providers";
@@ -31,6 +33,8 @@ export function activate(context: vscode.ExtensionContext) {
       CopyTreeStructureCommand.register(context),
       CreateClibbitFolderCommand.register(context),
       CreateClibbitCommand.register(context),
+      ExportClibbitCommand.register(context),
+      ImportClibbitCommand.register(context),
       ...AddToClibbitCommand.register(context)
     );
     outputChannel.appendLine('Commands registered successfully');
