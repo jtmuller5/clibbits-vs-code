@@ -17,7 +17,11 @@
   ],
   "activationEvents": [
     "onCommand:clibbits.copyAllFiles",
-    "onCommand:clibbits.copyFile"
+    "onCommand:clibbits.copyFile",
+    "onCommand:clibbits.createPromptFolder",
+    "onCommand:clibbits.createPromptFile",
+    "onCommand:clibbits.addToPromptFile",
+    "onCommand:clibbits.addToPromptFile.file"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -67,6 +71,26 @@
       {
         "command": "clibbits.copyTreeStructure",
         "title": "Copy Tree Structure"
+      },
+      {
+        "command": "clibbits.createPromptFolder",
+        "title": "Create Prompts Folder",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.createPromptFile",
+        "title": "Create Prompt File",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.addToPromptFile",
+        "title": "Add to Prompt File",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.addToPromptFile.file",
+        "title": "Add to Prompt File",
+        "category": "Clibbits"
       }
     ],
     "menus": {
@@ -85,6 +109,16 @@
           "when": "explorerResourceIsFolder || resourceScheme == file",
           "command": "clibbits.copyTreeStructure",
           "group": "clibbits@1"
+        },
+        {
+          "command": "clibbits.createPromptFolder",
+          "group": "clibbits@2",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "clibbits.addToPromptFile.file",
+          "group": "clibbits@3",
+          "when": "explorerResourceIsFolder || resourceScheme == file"
         }
       ],
       "editor/context": [
@@ -100,6 +134,11 @@
         },
         {
           "command": "clibbits.copyCodeBlock",
+          "group": "5_cutcopypaste",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "clibbits.addToPromptFile",
           "group": "5_cutcopypaste",
           "when": "editorHasSelection"
         },

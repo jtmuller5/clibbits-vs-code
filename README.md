@@ -49,7 +49,59 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - System folders (like node_modules, .git) are automatically excluded
 - Perfect for documenting project structures or sharing folder organization in discussions
 
-#### Example Output
+### 📝 Create and Manage Prompt Files
+- Create reusable prompt files for GitHub Copilot and other AI assistants
+- Store and organize code snippets for common patterns or reference
+- Quickly add selected code to prompt files for later use
+
+#### Creating Prompt Files
+- Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and type "Clibbits: Create Prompts Folder"
+- This creates a `.github/prompts/clibbits` folder in your workspace
+- Use "Clibbits: Create Prompt File" to create a new prompt file with a template
+
+#### Adding Code to Prompt Files
+- **From Editor Selection:**
+  - Select code in your editor
+  - Right-click and select "Clibbits: Add to Prompt File"
+  - Choose which prompt file to add the code to from the dropdown menu
+  - The code is automatically added to the "Context" section of the prompt file
+
+- **From Explorer (Files or Folders):**
+  - Right-click on any file or folder in the Explorer
+  - Select "Clibbits: Add to Prompt File"
+  - Choose which prompt file to add the files to
+  - File links will be added to the "Files" section of the prompt file
+  - For folders, links to all text files will be recursively added (up to a reasonable depth)
+
+#### Example Prompt File Structure
+
+```markdown
+# analytics
+
+## Description
+Prompt file for analyzing application metrics and generating reports.
+
+## Instructions
+Use this prompt to generate analytics reports or debug performance issues.
+
+## Context
+```typescript
+// From analytics.ts
+function calculateMetrics(data: MetricsData[]): MetricsSummary {
+  // Code snippet that was copied from the editor
+  return { ... };
+}
+```
+
+## Files
+- [src/utils/analytics.ts](../../../src/utils/analytics.ts)
+- [src/components/AnalyticsChart.tsx](../../../src/components/AnalyticsChart.tsx)
+
+## References
+- [Documentation](https://example.com/docs)
+```
+
+#### Tree Structure Example
 
 ```
 Structure of my-project:
@@ -127,6 +179,33 @@ function example() {
    - "Copy File Contents to Clipboard" - Copies current file
    - "Copy All Open Files to Clipboard" - Copies all open files
    - "Copy Code Block to Clipboard" - Copies the current code block
+   - "Create Prompts Folder" - Creates the .github/prompts/clibbits folder
+   - "Create Prompt File" - Creates a new prompt file
+   - "Add to Prompt File" - Adds selected code to a prompt file
+
+## Using Prompt Files with GitHub Copilot
+
+Clibbits helps you create and manage prompt files that can be used with GitHub Copilot to provide reusable instructions. Prompt files are structured with sections:
+
+- **Description**: A brief overview of what this prompt file is for
+- **Instructions**: How the AI should use the prompt file
+- **Context**: Code snippets added by selecting code and using "Add to Prompt File"
+- **Files**: Links to relevant files added by right-clicking in Explorer
+- **References**: Additional documentation or resources
+
+After creating your prompt files:
+
+1. Enable prompt files in VS Code:
+   - Go to Settings and enable `chat.promptFiles`
+   - Add `.github/prompts` to your `chat.promptFilesLocations` setting
+
+2. Use your prompt files with Copilot:
+   - In Copilot Chat, click the "Attach Context" icon (⌘/ or Ctrl+/)
+   - Select "Prompt..."
+   - Choose your prompt file from the list
+   - Copilot will have access to all the code snippets and file links
+
+3. Learn more about prompt files in the [VS Code documentation](https://code.visualstudio.com/docs/copilot/copilot-customization#_reusable-prompt-files-experimental)
 
 ## Limitations
 

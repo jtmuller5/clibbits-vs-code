@@ -6,6 +6,9 @@ import {
   CopyFolderRecursiveCommand,
   CopyTreeStructureCommand,
   CopyWithoutCommentsCommand,
+  CreatePromptFolderCommand,
+  CreatePromptFileCommand,
+  AddToPromptFileCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 
@@ -19,7 +22,10 @@ export function activate(context: vscode.ExtensionContext) {
     CopyFolderRecursiveCommand.register(context),
     CopyWithoutCommentsCommand.register(context),
     CopyAllFilesWithoutCommentsCommand.register(context),
-    CopyTreeStructureCommand.register(context)
+    CopyTreeStructureCommand.register(context),
+    CreatePromptFolderCommand.register(context),
+    CreatePromptFileCommand.register(context),
+    ...AddToPromptFileCommand.register(context)
   );
 }
 
