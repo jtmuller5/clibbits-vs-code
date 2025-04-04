@@ -16,12 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:clibbits.copyAllFiles",
-    "onCommand:clibbits.copyFile",
-    "onCommand:clibbits.createPromptFolder",
-    "onCommand:clibbits.createPromptFile",
-    "onCommand:clibbits.addToPromptFile",
-    "onCommand:clibbits.addToPromptFile.file"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -73,23 +68,23 @@
         "title": "Copy Tree Structure"
       },
       {
-        "command": "clibbits.createPromptFolder",
-        "title": "Create Prompts Folder",
+        "command": "clibbits.createClibbitFolder",
+        "title": "Create Clibbits Folder",
         "category": "Clibbits"
       },
       {
-        "command": "clibbits.createPromptFile",
-        "title": "Create Prompt File",
+        "command": "clibbits.createClibbit",
+        "title": "Create Clibbit",
         "category": "Clibbits"
       },
       {
-        "command": "clibbits.addToPromptFile",
-        "title": "Add to Prompt File",
+        "command": "clibbits.addToClibbit",
+        "title": "Add to Clibbit",
         "category": "Clibbits"
       },
       {
-        "command": "clibbits.addToPromptFile.file",
-        "title": "Add to Prompt File",
+        "command": "clibbits.addToClibbit.file",
+        "title": "Add to Clibbit",
         "category": "Clibbits"
       }
     ],
@@ -111,12 +106,12 @@
           "group": "clibbits@1"
         },
         {
-          "command": "clibbits.createPromptFolder",
+          "command": "clibbits.createClibbitFolder",
           "group": "clibbits@2",
           "when": "explorerResourceIsFolder"
         },
         {
-          "command": "clibbits.addToPromptFile.file",
+          "command": "clibbits.addToClibbit.file",
           "group": "clibbits@3",
           "when": "explorerResourceIsFolder || resourceScheme == file"
         }
@@ -138,7 +133,7 @@
           "when": "editorHasSelection"
         },
         {
-          "command": "clibbits.addToPromptFile",
+          "command": "clibbits.addToClibbit",
           "group": "5_cutcopypaste",
           "when": "editorHasSelection"
         },
@@ -182,7 +177,18 @@
         "mac": "cmd+shift+b",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Clibbits",
+      "properties": {
+        "clibbits.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Code Lens for adding selected code to clibbits"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

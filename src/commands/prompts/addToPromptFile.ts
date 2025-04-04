@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 
-export class AddToPromptFileCommand {
-  public static readonly commandName = "clibbits.addToPromptFile";
+export class AddToClibbitCommand {
+  public static readonly commandName = "clibbits.addToClibbit";
 
   private static async getPromptFiles(): Promise<string[]> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -170,14 +170,14 @@ export class AddToPromptFileCommand {
       const promptFiles = await this.getPromptFiles();
 
       if (promptFiles.length === 0) {
-        const createNew = "Create New Prompt File";
+        const createNew = "Create New Clibbit";
         const response = await vscode.window.showInformationMessage(
-          "No prompt files found. Would you like to create one?",
+          "No clibbits found. Would you like to create one?",
           createNew
         );
 
         if (response === createNew) {
-          await vscode.commands.executeCommand("clibbits.createPromptFile");
+          await vscode.commands.executeCommand("clibbits.createClibbit");
           // After creating a file, try again
           return this.handleFileFromExplorer(uri);
         }
@@ -193,7 +193,7 @@ export class AddToPromptFileCommand {
       const selectedPromptFile = await vscode.window.showQuickPick(
         promptFileItems,
         {
-          placeHolder: "Select a prompt file to add the files to",
+          placeHolder: "Select a clibbit to add the files to",
         }
       );
 
@@ -207,7 +207,7 @@ export class AddToPromptFileCommand {
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: "Adding files to prompt file...",
+          title: "Adding files to clibbit...",
           cancellable: false,
         },
         async (progress) => {
@@ -276,7 +276,7 @@ export class AddToPromptFileCommand {
       );
     } catch (error) {
       vscode.window.showErrorMessage(
-        `Failed to add to prompt file: ${
+        `Failed to add to clibbit: ${
           error instanceof Error ? error.message : "Unknown error"
         }`
       );
@@ -307,14 +307,14 @@ export class AddToPromptFileCommand {
       const promptFiles = await this.getPromptFiles();
 
       if (promptFiles.length === 0) {
-        const createNew = "Create New Prompt File";
+        const createNew = "Create New Clibbit";
         const response = await vscode.window.showInformationMessage(
-          "No prompt files found. Would you like to create one?",
+          "No clibbits found. Would you like to create one?",
           createNew
         );
 
         if (response === createNew) {
-          await vscode.commands.executeCommand("clibbits.createPromptFile");
+          await vscode.commands.executeCommand("clibbits.createClibbit");
           // After creating a file, try again
           return await vscode.commands.executeCommand(this.commandName);
         }
@@ -330,7 +330,7 @@ export class AddToPromptFileCommand {
       const selectedPromptFile = await vscode.window.showQuickPick(
         promptFileItems,
         {
-          placeHolder: "Select a prompt file to add the code snippet to",
+          placeHolder: "Select a clibbit to add the code snippet to",
         }
       );
 
@@ -363,7 +363,7 @@ ${selectedText}
       await vscode.window.showTextDocument(document);
     } catch (error) {
       vscode.window.showErrorMessage(
-        `Failed to add code to prompt file: ${
+        `Failed to add code to clibbit: ${
           error instanceof Error ? error.message : "Unknown error"
         }`
       );

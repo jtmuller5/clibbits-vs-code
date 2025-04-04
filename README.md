@@ -49,20 +49,21 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - System folders (like node_modules, .git) are automatically excluded
 - Perfect for documenting project structures or sharing folder organization in discussions
 
-### 📝 Create and Manage Prompt Files
-- Create reusable prompt files for GitHub Copilot and other AI assistants
+### 📝 Create and Manage Clibbits
+- Create reusable clibbits for GitHub Copilot and other AI assistants
 - Store and organize code snippets for common patterns or reference
-- Quickly add selected code to prompt files for later use
+- Quickly add selected code to clibbits for later use
 
-#### Creating Prompt Files
-- Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and type "Clibbits: Create Prompts Folder"
+#### Creating Clibbits
+- Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and type "Clibbits: Create Clibbits Folder"
 - This creates a `.github/prompts/clibbits` folder in your workspace
-- Use "Clibbits: Create Prompt File" to create a new prompt file with a template
+- Use "Clibbits: Create Clibbit" to create a new clibbit with a template
 
 #### Adding Code to Prompt Files
 - **From Editor Selection:**
   - Select code in your editor
-  - Right-click and select "Clibbits: Add to Prompt File"
+  - **Option 1:** Right-click and select "Clibbits: Add to Prompt File"
+  - **Option 2:** Click the "Add to Prompt File" Code Lens that appears above your selection
   - Choose which prompt file to add the code to from the dropdown menu
   - The code is automatically added to the "Context" section of the prompt file
 
@@ -96,9 +97,6 @@ function calculateMetrics(data: MetricsData[]): MetricsSummary {
 ## Files
 - [src/utils/analytics.ts](../../../src/utils/analytics.ts)
 - [src/components/AnalyticsChart.tsx](../../../src/components/AnalyticsChart.tsx)
-
-## References
-- [Documentation](https://example.com/docs)
 ```
 
 #### Tree Structure Example
@@ -206,6 +204,18 @@ After creating your prompt files:
    - Copilot will have access to all the code snippets and file links
 
 3. Learn more about prompt files in the [VS Code documentation](https://code.visualstudio.com/docs/copilot/copilot-customization#_reusable-prompt-files-experimental)
+
+## Configuration
+
+Clibbits offers the following configuration options:
+
+- `clibbits.enableCodeLens` - Enable/disable the Code Lens feature that appears when you select code (default: `true`)
+
+To change these settings:
+
+1. Open VS Code settings (File > Preferences > Settings or `Ctrl+,`)
+2. Search for "Clibbits"
+3. Adjust the settings according to your preferences
 
 ## Limitations
 

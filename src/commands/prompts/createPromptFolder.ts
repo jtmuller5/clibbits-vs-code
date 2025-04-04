@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 
-export class CreatePromptFolderCommand {
-  public static readonly commandName = "clibbits.createPromptFolder";
+export class CreateClibbitFolderCommand {
+  public static readonly commandName = "clibbits.createClibbitFolder";
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     return vscode.commands.registerCommand(this.commandName, async () => {
@@ -27,15 +27,15 @@ export class CreatePromptFolderCommand {
           
           // Create a README.md file in the prompts folder to explain the feature
           const readmePath = path.join(promptsFolder, "README.md");
-          const readmeContent = `# Clibbits Prompt Files
+          const readmeContent = `# Clibbits Files
 
-This folder contains prompt files created by the Clibbits extension. These files can be used with GitHub Copilot or other AI assistants to provide reusable instructions.
+This folder contains clibbit files created by the Clibbits extension. These files can be used with GitHub Copilot or other AI assistants to provide reusable instructions.
 
 ## How to use
 
-1. Create a new prompt file using the "Clibbits: Create Prompt File" command.
-2. Add code snippets to your prompt file using the "Clibbits: Add to Prompt File" command.
-3. Use the prompts with GitHub Copilot by attaching them to your chat requests.
+1. Create a new clibbit using the "Clibbits: Create Clibbit" command.
+2. Add code snippets to your clibbit using the "Clibbits: Add to Clibbit" command.
+3. Use the clibbits with GitHub Copilot by attaching them to your chat requests.
 
 ## Learn more
 
@@ -44,7 +44,7 @@ For more information about prompt files, see the [VS Code documentation](https:/
           
           await fs.promises.writeFile(readmePath, readmeContent);
           
-          vscode.window.showInformationMessage(`Successfully created prompt folder at ${promptsFolder}`);
+          vscode.window.showInformationMessage(`Successfully created clibbits folder at ${promptsFolder}`);
           
           // Check if VS Code has the chat.promptFiles setting enabled
           // If not, suggest enabling it
