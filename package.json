@@ -128,12 +128,12 @@
         {
           "command": "clibbits.exportClibbit",
           "group": "clibbits@4",
-          "when": "workspaceFolderCount != 0"
+          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && workspaceFolderCount != 0"
         },
         {
           "command": "clibbits.importClibbit",
           "group": "clibbits@4",
-          "when": "workspaceFolderCount != 0"
+          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && workspaceFolderCount != 0"
         }
       ],
       "editor/context": [

@@ -51,15 +51,11 @@ export class AddToClibbitCommand {
         .slice(sectionIndex + `## ${section}`.length)
         .match(/^##\s/m);
 
-      console.log("Section Index:", sectionIndex);
-      console.log("Next Section Match:", nextSectionMatch);
-
       if (nextSectionMatch && nextSectionMatch.length > 0) {
         const matchIndex = promptContent
           .slice(sectionIndex)
           .indexOf(nextSectionMatch[0]);
 
-        console.log("Match Index:", matchIndex);
         if (matchIndex >= 0) {
           const nextSectionIndex = sectionIndex + (`## ${section}`.length);
           newContent =
@@ -184,6 +180,22 @@ export class AddToClibbitCommand {
         return;
       }
 
+      // First, ask the user if they want to add as reference or full text
+      const ADD_AS_REFERENCE = "Add as Reference";
+      const ADD_FULL_TEXT = "Add Full Text";
+      
+      const addMode = await vscode.window.showQuickPick(
+        [ADD_AS_REFERENCE, ADD_FULL_TEXT], 
+        {
+          placeHolder: "How would you like to add the file(s)?",
+          canPickMany: false
+        }
+      );
+      
+      if (!addMode) {
+        return; // User cancelled
+      }
+
       // Ask the user which prompt file to use
       const promptFileItems = promptFiles.map((file) => ({
         label: path.basename(file),
@@ -211,7 +223,8 @@ export class AddToClibbitCommand {
           cancellable: false,
         },
         async (progress) => {
-          let fileLinks = "";
+          const isAddingReference = addMode === ADD_AS_REFERENCE;
+          let fileContent = "";
 
           for (let i = 0; i < filesToProcess.length; i++) {
             const filePath = filesToProcess[i];
@@ -221,22 +234,31 @@ export class AddToClibbitCommand {
                 ? path.relative(workspaceFolder.uri.fsPath, filePath)
                 : path.basename(filePath);
 
-              // Create a relative path for the markdown link
-              // Count the number of directories in the prompt file path from workspace root
-              const promptRelativePath = path.relative(
-                workspaceFolder
-                  ? workspaceFolder.uri.fsPath
-                  : path.dirname(promptFilePath),
-                promptFilePath
-              );
+              if (isAddingReference) {
+                // Create a relative path for the markdown link
+                // Count the number of directories in the prompt file path from workspace root
+                const promptRelativePath = path.relative(
+                  workspaceFolder
+                    ? workspaceFolder.uri.fsPath
+                    : path.dirname(promptFilePath),
+                  promptFilePath
+                );
 
-              const directoryCount =
-                promptRelativePath.split(path.sep).length - 1;
-              const backPath = "../".repeat(directoryCount);
+                const directoryCount =
+                  promptRelativePath.split(path.sep).length - 1;
+                const backPath = "../".repeat(directoryCount);
 
-              // Create the file link in markdown format
-              fileLinks += `- [${relativePath}](${backPath}${relativePath})`;
-
+                // Create the file link in markdown format
+                fileContent += `- [${relativePath}](${backPath}${relativePath})\n`;
+              } else {
+                // Read file content and add as a markdown code block
+                const fileData = await fs.promises.readFile(filePath, "utf8");
+                const ext = path.extname(relativePath).substring(1); // Get extension without dot
+                const languageId = this.determineLanguageId(ext);
+                
+                fileContent += `### ${relativePath}\n\n\`\`\`${languageId}\n${fileData}\n\`\`\`\n\n`;
+              }
+              
               progress.report({
                 message: `Processing file ${i + 1} of ${filesToProcess.length}`,
                 increment: 100 / filesToProcess.length,
@@ -250,17 +272,18 @@ export class AddToClibbitCommand {
             }
           }
 
-          if (fileLinks) {
-            // Add file links to the Files section
-            await this.addToPromptFile(fileLinks, promptFilePath, "Files");
+          if (fileContent) {
+            // Add file content to the appropriate section
+            const section = isAddingReference ? "Files" : "Context";
+            await this.addToPromptFile(fileContent, promptFilePath, section);
 
             // Show success message
             const message =
               filesToProcess.length === 1
-                ? `Added link to ${path.basename(
+                ? `Added ${isAddingReference ? "reference to" : "contents of"} ${path.basename(
                     filesToProcess[0]
                   )} in ${path.basename(promptFilePath)}`
-                : `Added links to ${
+                : `Added ${isAddingReference ? "references to" : "contents of"} ${
                     filesToProcess.length
                   } files in ${path.basename(promptFilePath)}`;
 
@@ -281,6 +304,38 @@ export class AddToClibbitCommand {
         }`
       );
     }
+  }
+
+  // Helper method to determine the language ID for syntax highlighting
+  private static determineLanguageId(extension: string): string {
+    // Map common file extensions to language IDs
+    const extensionMap: { [key: string]: string } = {
+      js: "javascript",
+      ts: "typescript",
+      jsx: "javascriptreact",
+      tsx: "typescriptreact",
+      html: "html",
+      css: "css",
+      py: "python",
+      rb: "ruby",
+      java: "java",
+      go: "go",
+      php: "php",
+      cs: "csharp",
+      rs: "rust",
+      swift: "swift",
+      kt: "kotlin",
+      cpp: "cpp",
+      c: "c",
+      h: "c",
+      json: "json",
+      yaml: "yaml",
+      yml: "yaml",
+      xml: "xml",
+      md: "markdown"
+    };
+
+    return extensionMap[extension.toLowerCase()] || "plaintext";
   }
 
   // Command handler for text selection from editor
