@@ -16,7 +16,20 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onCommand:clibbits.copyAllFiles",
+    "onCommand:clibbits.copyAllFilesWithoutComments",
+    "onCommand:clibbits.copyFile",
+    "onCommand:clibbits.copyCodeBlock",
+    "onCommand:clibbits.copyFolderRecursive",
+    "onCommand:clibbits.copyWithoutComments",
+    "onCommand:clibbits.copyTreeStructure",
+    "onCommand:clibbits.createClibbitFolder",
+    "onCommand:clibbits.createClibbit",
+    "onCommand:clibbits.addToClibbit",
+    "onCommand:clibbits.addToClibbit.file",
+    "onCommand:clibbits.exportClibbit",
+    "onCommand:clibbits.importClibbit",
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
