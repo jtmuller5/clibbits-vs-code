@@ -43,15 +43,6 @@ export class CreateClibbitCommand {
         const promptName = await vscode.window.showInputBox({
           prompt: "Enter a name for your clibbit (without extension)",
           placeHolder: "example-clibbit",
-          validateInput: (input) => {
-            if (!input) {
-              return "Please enter a name for your clibbit.";
-            }
-            if (!/^[a-zA-Z0-9_-]+$/.test(input)) {
-              return "Prompt name can only contain letters, numbers, underscores, and hyphens.";
-            }
-            return null;
-          },
         });
 
         if (!promptName) {
@@ -59,9 +50,14 @@ export class CreateClibbitCommand {
         }
 
         // Create the prompt file
+        const formattedPromptName = promptName
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, ""); // Ensure no leading or trailing dashes
         const promptFilePath = path.join(
           promptsFolder,
-          `${promptName}.prompt.md`
+          `${formattedPromptName}.prompt.md`
         );
 
         // Check if the file already exists
