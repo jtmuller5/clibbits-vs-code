@@ -9,12 +9,12 @@
     "type": "git",
     "url": "https://github.com/jtmuller5/clibbits"
   },
-  "engines": {
-    "vscode": "^1.60.0"
-  },
   "categories": [
     "Other"
   ],
+  "engines": {
+    "vscode": "^1.60.0"
+  },
   "activationEvents": [
     "onCommand:clibbits.copyAllFiles",
     "onCommand:clibbits.copyAllFilesWithoutComments",
@@ -29,11 +29,23 @@
     "onCommand:clibbits.addToClibbit.file",
     "onCommand:clibbits.exportClibbit",
     "onCommand:clibbits.importClibbit",
+    "onCommand:clibbits.signIn",
+    "onCommand:clibbits.signOut",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clibbits.signIn",
+        "title": "Sign In to Supabase",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.signOut",
+        "title": "Sign Out from Supabase",
+        "category": "Clibbits"
+      },
       {
         "command": "clibbits.copyAllFiles",
         "title": "Copy Open Files for AI",
@@ -112,6 +124,28 @@
       }
     ],
     "menus": {
+      "statusBar/context": [
+        {
+          "command": "clibbits.signIn",
+          "group": "1_supabase",
+          "when": "true"
+        },
+        {
+          "command": "clibbits.signOut",
+          "group": "1_supabase",
+          "when": "true"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "clibbits.signIn",
+          "when": "true"
+        },
+        {
+          "command": "clibbits.signOut",
+          "when": "true"
+        }
+      ],
       "explorer/context": [
         {
           "command": "clibbits.copyFile",
@@ -232,11 +266,14 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.60.0",
     "@types/node": "14.x",
+    "@types/vscode": "^1.60.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.1.0",
     "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4"
   }
 }

@@ -6,5 +6,5 @@ export * from "./copyFolderRecursive";
 export * from "./copyWithoutComments";
 export * from "./copyAllFilesWithoutComments";
 export * from "./copyTreeStructure";
-export * from "./prompts";
-export * from "./prompts";
+export * from "./signIn";
+export * from "./signOut";

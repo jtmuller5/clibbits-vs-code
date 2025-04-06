@@ -1,0 +1,62 @@
+import * as vscode from "vscode";
+
+export class ConfigureSupabaseCommand {
+  public static readonly commandName = "clibbits.configureSupabase";
+
+  public static register(context: vscode.ExtensionContext): vscode.Disposable {
+    return vscode.commands.registerCommand(this.commandName, async () => {
+      try {
+        // Get current configuration
+        const config = vscode.workspace.getConfiguration('clibbits.supabase');
+        const currentUrl = config.get<string>('url') || '';
+        const currentAnonKey = config.get<string>('anonKey') || '';
+
+        // Ask for Supabase URL
+        const url = await vscode.window.showInputBox({
+          prompt: "Enter your Supabase URL",
+          placeHolder: "https://your-project.supabase.co",
+          value: currentUrl,
+          validateInput: (value) => {
+            return value && value.startsWith('http') ? null : "Please enter a valid URL starting with http(s)://";
+          }
+        });
+
+        if (url === undefined) {
+          return; // User cancelled
+        }
+
+        // Ask for Supabase Anonymous Key
+        const anonKey = await vscode.window.showInputBox({
+          prompt: "Enter your Supabase Anonymous Key",
+          placeHolder: "eyJhb....",
+          value: currentAnonKey,
+          password: true, // Hide the input
+          validateInput: (value) => {
+            return value && value.length > 0 ? null : "Please enter a valid anonymous key";
+          }
+        });
+
+        if (anonKey === undefined) {
+          return; // User cancelled
+        }
+
+        // Save the configuration
+        await config.update('url', url, vscode.ConfigurationTarget.Global);
+        await config.update('anonKey', anonKey, vscode.ConfigurationTarget.Global);
+
+        vscode.window.showInformationMessage(
+          "Supabase configuration updated. Please reload the window for changes to take effect.",
+          "Reload Window"
+        ).then(selection => {
+          if (selection === "Reload Window") {
+            vscode.commands.executeCommand("workbench.action.reloadWindow");
+          }
+        });
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `Failed to configure Supabase: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
+      }
+    });
+  }
+}
