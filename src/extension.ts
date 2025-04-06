@@ -59,12 +59,13 @@ export function activate(context: vscode.ExtensionContext) {
       ...AddToClibbitCommand.register(context)
     );
     outputChannel.appendLine('Commands registered successfully');
-  
+
     // Register code lens providers
     outputChannel.appendLine('Registering code lens providers...');
     const addToClibbitCodeLensProvider = new AddToClibbitCodeLensProvider();
-    const promptCodeLensProvider = new PromptCodeLensProvider();
+    const promptCodeLensProvider = new PromptCodeLensProvider(context, outputChannel);
     
+    console.log("After")
     context.subscriptions.push(
       vscode.languages.registerCodeLensProvider(
         ['*'], // Apply to all files
@@ -83,4 +84,3 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
-

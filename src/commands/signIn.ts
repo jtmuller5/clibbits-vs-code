@@ -58,6 +58,13 @@ export class SignInCommand {
             const statusBar = new SupabaseStatusBar(context);
             statusBar.update();
             
+            // Refresh code lens to update button states
+            try {
+              await vscode.commands.executeCommand('clibbits.refreshCodeLens');
+            } catch (err) {
+              console.error('Error refreshing code lens:', err);
+            }
+            
             vscode.window.showInformationMessage(`Successfully signed in as ${email}`);
           }
         );
