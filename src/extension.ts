@@ -63,9 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
     // Register code lens providers
     outputChannel.appendLine('Registering code lens providers...');
     const addToClibbitCodeLensProvider = new AddToClibbitCodeLensProvider();
-    const promptCodeLensProvider = new PromptCodeLensProvider(context, outputChannel);
+    const promptCodeLensProvider = new PromptCodeLensProvider(context);
     
-    console.log("After")
     context.subscriptions.push(
       vscode.languages.registerCodeLensProvider(
         ['*'], // Apply to all files
