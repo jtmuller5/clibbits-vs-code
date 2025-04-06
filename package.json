@@ -38,12 +38,12 @@
     "commands": [
       {
         "command": "clibbits.signIn",
-        "title": "Sign In to Supabase",
+        "title": "Sign In to Clibbits",
         "category": "Clibbits"
       },
       {
         "command": "clibbits.signOut",
-        "title": "Sign Out from Supabase",
+        "title": "Sign Out from Clibbits",
         "category": "Clibbits"
       },
       {
