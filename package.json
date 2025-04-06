@@ -33,11 +33,17 @@
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.shareClibbit",
     "onCommand:clibbits.searchClibbits",
+    "onCommand:clibbits.searchSimilarClibbits",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clibbits.searchSimilarClibbits",
+        "title": "Find Similar Clibbits",
+        "category": "Clibbits"
+      },
       {
         "command": "clibbits.searchClibbits",
         "title": "Search Clibbits",
@@ -150,6 +156,10 @@
       ],
       "commandPalette": [
         {
+          "command": "clibbits.searchSimilarClibbits",
+          "when": "true"
+        },
+        {
           "command": "clibbits.searchClibbits",
           "when": "true"
         },
@@ -209,6 +219,11 @@
         }
       ],
       "editor/context": [
+        {
+          "command": "clibbits.searchSimilarClibbits",
+          "group": "clibbits@1",
+          "when": "editorHasSelection"
+        },
         {
           "command": "clibbits.copyFile",
           "group": "5_cutcopypaste",
