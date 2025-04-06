@@ -4,6 +4,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { supabaseClient } from "../supabase/client";
 import matter from 'gray-matter';
+import { Blob } from "buffer";
 
 export interface Clibbit {
   id: string;
@@ -166,7 +167,7 @@ export class ShareClibbitCommand {
                   tags: tags,
                   updated_at: new Date().toISOString(),
                   sources: data.sources || [],
-                  source: 'VSCode'
+                  source: 'VS Code'
                 };
                 
                 const { error } = await supabaseClient
@@ -209,7 +210,7 @@ export class ShareClibbitCommand {
                   upvotes: 0,
                   downvotes: 0,
                   sources: data.sources || [],
-                  source: 'VSCode'
+                  source: 'VS Code'
                 };
                 
                 const { data: insertedData, error } = await supabaseClient

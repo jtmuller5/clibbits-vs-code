@@ -75,7 +75,7 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
   - **Option 1:** Right-click and select "Clibbits: Add to Clibbit"
   - **Option 2:** Click the "Add selection to Clibbit" Code Lens that appears above your selection
   - Choose which clibbit to add the code to from the dropdown menu
-  - The code is automatically added to the "Context" section of the clibbit
+  - The code is automatically added to the "Content" section of the clibbit
 
 - **From Explorer (Files or Folders):**
   - Right-click on any file or folder in the Explorer

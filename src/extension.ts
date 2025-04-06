@@ -12,7 +12,7 @@ import {
   SearchClibbitsCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
-import { AddToClibbitCodeLensProvider } from "./providers";
+import { AddToClibbitCodeLensProvider, PromptCodeLensProvider } from "./providers";
 import { initializeSupabaseWithSession } from "./supabase/client";
 import { SupabaseStatusBar } from "./supabase/statusBar";
 import { CreateClibbitFolderCommand, CreateClibbitCommand, ExportClibbitCommand, ImportClibbitCommand, AddToClibbitCommand } from "./commands/prompts";
@@ -60,16 +60,22 @@ export function activate(context: vscode.ExtensionContext) {
     );
     outputChannel.appendLine('Commands registered successfully');
   
-    // Register code lens provider
-    outputChannel.appendLine('Registering code lens provider...');
-    const codeLensProvider = new AddToClibbitCodeLensProvider();
+    // Register code lens providers
+    outputChannel.appendLine('Registering code lens providers...');
+    const addToClibbitCodeLensProvider = new AddToClibbitCodeLensProvider();
+    const promptCodeLensProvider = new PromptCodeLensProvider();
+    
     context.subscriptions.push(
       vscode.languages.registerCodeLensProvider(
         ['*'], // Apply to all files
-        codeLensProvider
+        addToClibbitCodeLensProvider
+      ),
+      vscode.languages.registerCodeLensProvider(
+        '*', // Apply to all files
+        promptCodeLensProvider
       )
     );
-    outputChannel.appendLine('Code lens provider registered successfully');
+    outputChannel.appendLine('Code lens providers registered successfully');
   } catch (error) {
     outputChannel.appendLine(`Error during activation: ${error}`);
     console.error('Error activating Clibbits:', error);

@@ -416,7 +416,7 @@ ${selectedText}
       await this.addToPromptFile(
         codeSnippet,
         selectedPromptFile.description,
-        "Context"
+        "Content"
       );
 
       // Show success message
