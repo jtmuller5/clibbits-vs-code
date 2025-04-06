@@ -9,3 +9,4 @@ export * from "./copyTreeStructure";
 export * from "./signIn";
 export * from "./signOut";
 export * from "./shareClibbit";
+export * from "./searchClibbits";

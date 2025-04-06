@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import * as crypto from "crypto";
 import { supabaseClient } from "../supabase/client";
 import matter from 'gray-matter';
 
@@ -18,6 +19,7 @@ export interface Clibbit {
   upvotes: number;
   downvotes: number;
   sources: string[];
+  source?: string;
 }
 
 export class ShareClibbitCommand {
@@ -135,8 +137,26 @@ export class ShareClibbitCommand {
               const isUpdate = !!data.id;
               let clibbitId: string;
               
+              // Upload content to Supabase Storage
+              progress.report({ message: "Uploading to Supabase Storage..." });
+              
               if (isUpdate) {
                 // Update existing clibbit
+                clibbitId = data.id;
+                
+                // 1. Upload content to Storage
+                const filePath = `${userId}/${clibbitId}.md`;
+                const { error: storageError } = await supabaseClient.storage
+                  .from('clibbits')
+                  .upload(filePath, new Blob([clibbitContent], { type: 'text/markdown' }), {
+                    upsert: true // Update if exists
+                  });
+                
+                if (storageError) {
+                  throw new Error(`Storage error: ${storageError.message}`);
+                }
+                
+                // 2. Update database record
                 const clibbitData: Partial<Clibbit> = {
                   title: data.title,
                   content_preview: contentPreview,
@@ -145,7 +165,8 @@ export class ShareClibbitCommand {
                   instructions: data.instructions || "",
                   tags: tags,
                   updated_at: new Date().toISOString(),
-                  sources: data.sources || []
+                  sources: data.sources || [],
+                  source: 'VSCode'
                 };
                 
                 const { error } = await supabaseClient
@@ -157,10 +178,24 @@ export class ShareClibbitCommand {
                   throw new Error(error.message);
                 }
                 
-                clibbitId = data.id;
                 vscode.window.showInformationMessage(`Clibbit updated successfully with ID: ${clibbitId}`);
               } else {
                 // Insert new clibbit
+                clibbitId = crypto.randomUUID(); // Generate a new UUID
+                
+                // 1. Upload content to Storage
+                const filePath = `${userId}/${clibbitId}.md`;
+                const { error: storageError } = await supabaseClient.storage
+                  .from('clibbits')
+                  .upload(filePath, new Blob([clibbitContent], { type: 'text/markdown' }), {
+                    upsert: false // Don't update if exists (shouldn't with UUID)
+                  });
+                
+                if (storageError) {
+                  throw new Error(`Storage error: ${storageError.message}`);
+                }
+                
+                // 2. Insert database record
                 const clibbitData: Omit<Clibbit, 'id'> = {
                   title: data.title,
                   content_preview: contentPreview,
@@ -173,24 +208,22 @@ export class ShareClibbitCommand {
                   user_id: userId,
                   upvotes: 0,
                   downvotes: 0,
-                  sources: data.sources || []
+                  sources: data.sources || [],
+                  source: 'VSCode'
                 };
                 
                 const { data: insertedData, error } = await supabaseClient
                   .from('clibbits')
-                  .insert(clibbitData)
+                  .insert({...clibbitData, id: clibbitId })
                   .select('id')
                   .single();
                 
                 if (error) {
+                  // Attempt to clean up the orphaned storage file
+                  await supabaseClient.storage.from('clibbits').remove([filePath]);
                   throw new Error(error.message);
                 }
                 
-                if (!insertedData?.id) {
-                  throw new Error("Failed to get ID for new clibbit");
-                }
-                
-                clibbitId = insertedData.id;
                 // Add the ID to the frontmatter data
                 data.id = clibbitId;
                 vscode.window.showInformationMessage(`Clibbit shared successfully with ID: ${clibbitId}`);

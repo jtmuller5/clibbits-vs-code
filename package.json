@@ -32,11 +32,17 @@
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.shareClibbit",
+    "onCommand:clibbits.searchClibbits",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clibbits.searchClibbits",
+        "title": "Search Clibbits",
+        "category": "Clibbits"
+      },
       {
         "command": "clibbits.shareClibbit",
         "title": "Share Clibbit",
@@ -143,6 +149,10 @@
         }
       ],
       "commandPalette": [
+        {
+          "command": "clibbits.searchClibbits",
+          "when": "true"
+        },
         {
           "command": "clibbits.shareClibbit",
           "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && !explorerResourceIsFolder"
