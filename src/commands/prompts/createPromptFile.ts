@@ -82,12 +82,17 @@ export class CreateClibbitCommand {
         }
 
         // Create the prompt file with a template
-        const templateContent = `# ${promptName}
+        const templateContent = `---
+title: ${promptName}
+id: 
+tags: []       
+---        
+# ${promptName}
 
 ## Instructions
 Instructions for how to use this prompt file.
 
-## Context
+## Content
 \`\`\`
 // Code snippets will be added here
 \`\`\`

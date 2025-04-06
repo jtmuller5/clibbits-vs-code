@@ -31,11 +31,17 @@
     "onCommand:clibbits.importClibbit",
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
+    "onCommand:clibbits.shareClibbit",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clibbits.shareClibbit",
+        "title": "Share Clibbit",
+        "category": "Clibbits"
+      },
       {
         "command": "clibbits.signIn",
         "title": "Sign In to Clibbits",
@@ -138,6 +144,10 @@
       ],
       "commandPalette": [
         {
+          "command": "clibbits.shareClibbit",
+          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && !explorerResourceIsFolder"
+        },
+        {
           "command": "clibbits.signIn",
           "when": "true"
         },
@@ -147,6 +157,11 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "clibbits.shareClibbit",
+          "group": "clibbits@5",
+          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && !explorerResourceIsFolder && workspaceFolderCount != 0"
+        },
         {
           "command": "clibbits.copyFile",
           "group": "5_cutcopypaste",
@@ -274,6 +289,8 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.4"
+    "@supabase/supabase-js": "^2.49.4",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.3.1"
   }
 }

@@ -8,3 +8,4 @@ export * from "./copyAllFilesWithoutComments";
 export * from "./copyTreeStructure";
 export * from "./signIn";
 export * from "./signOut";
+export * from "./shareClibbit";

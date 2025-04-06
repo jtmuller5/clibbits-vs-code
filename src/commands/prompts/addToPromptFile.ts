@@ -283,7 +283,7 @@ export class AddToClibbitCommand {
 
           if (fileContent) {
             // Add file content to the appropriate section
-            const section = isAddingReference ? "Files" : "Context";
+            const section = isAddingReference ? "Files" : "Content";
             await this.addToPromptFile(fileContent, promptFilePath, section);
 
             // Show success message

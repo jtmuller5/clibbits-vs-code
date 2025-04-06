@@ -8,6 +8,7 @@ import {
   CopyWithoutCommentsCommand,
   SignInCommand,
   SignOutCommand,
+  ShareClibbitCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 import { AddToClibbitCodeLensProvider } from "./providers";
@@ -52,6 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
       ImportClibbitCommand.register(context),
       SignInCommand.register(context),
       SignOutCommand.register(context),
+      ShareClibbitCommand.register(context),
       ...AddToClibbitCommand.register(context)
     );
     outputChannel.appendLine('Commands registered successfully');
