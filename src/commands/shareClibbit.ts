@@ -4,7 +4,6 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { supabaseClient } from "../supabase/client";
 import matter from 'gray-matter';
-import { Blob } from "buffer";
 
 export interface Clibbit {
   id: string;
