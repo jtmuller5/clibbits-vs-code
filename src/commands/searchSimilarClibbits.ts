@@ -2,12 +2,27 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import { supabaseClient } from "../supabase/client";
+import matter from 'gray-matter';
 
 interface SimilaritySearchResult {
   id: string;
   title: string;
   similarity: number;
   content?: string;
+}
+
+interface Clibbit {
+  id: string;
+  title: string;
+  content: string;
+  created_at?: string;
+  updated_at?: string;
+  user_id?: string;
+  tags?: string[];
+  prompt?: string;
+  instructions?: string;
+  sources?: string[];
+  content_preview?: string;
 }
 
 interface SimilaritySearchResponse {
@@ -58,16 +73,16 @@ export class SearchSimilarClibbitsCommand {
   }
 
   /**
-   * Fetches the full clibbit content from the database
+   * Fetches the full clibbit from the database
    * @param id ID of the clibbit to fetch
-   * @returns Full clibbit content
+   * @returns Full clibbit object
    */
-  private static async fetchClibbitContent(id: string): Promise<string> {
+  private static async fetchClibbitContent(id: string): Promise<Clibbit> {
     try {
       // Query the clibbits table directly using the Supabase client
       const { data, error } = await supabaseClient
         .from("clibbits")
-        .select("id, title, content, created_at")
+        .select("*") // Select all fields
         .eq("id", id)
         .single();
 
@@ -79,7 +94,7 @@ export class SearchSimilarClibbitsCommand {
         throw new Error(`Clibbit with ID ${id} not found`);
       }
 
-      return data.content || "";
+      return data as Clibbit;
     } catch (error) {
       console.error("Error fetching clibbit:", error);
       throw error;
@@ -88,13 +103,9 @@ export class SearchSimilarClibbitsCommand {
 
   /**
    * Saves the clibbit to a file in the .github/prompts/clibbits folder
-   * @param title Clibbit title
-   * @param content Clibbit content
+   * @param clibbit The clibbit object to save
    */
-  private static async saveClibbitToFile(
-    title: string,
-    content: string
-  ): Promise<string> {
+  private static async saveClibbitToFile(clibbit: Clibbit): Promise<string> {
     try {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) {
@@ -108,16 +119,32 @@ export class SearchSimilarClibbitsCommand {
       await fs.promises.mkdir(promptsDir, { recursive: true });
 
       // Create a filename from the title
-      const filename =
-        title
+      const kebabCaseTitle = clibbit.title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "") + ".prompt.md";
+          .replace(/(^-|-$)/g, "");
 
-      const filePath = path.join(promptsDir, filename);
+      const filePath = path.join(promptsDir, `${kebabCaseTitle}.prompt.md`);
+
+      // Create the frontmatter with only defined values
+      const frontmatter: Record<string, any> = {
+        id: clibbit.id,
+        title: clibbit.title,
+        tags: clibbit.tags || []
+      };
+      
+      // Only add optional fields if they exist and are not null/undefined
+      if (clibbit.prompt) frontmatter.prompt = clibbit.prompt;
+      if (clibbit.instructions) frontmatter.instructions = clibbit.instructions;
+      if (clibbit.sources && Array.isArray(clibbit.sources) && clibbit.sources.length > 0) {
+        frontmatter.sources = clibbit.sources;
+      }
+
+      // Create file content with frontmatter
+      const fileContent = matter.stringify(clibbit.content, frontmatter);
 
       // Write content to file
-      await fs.promises.writeFile(filePath, content);
+      await fs.promises.writeFile(filePath, fileContent);
 
       return filePath;
     } catch (error) {
@@ -244,18 +271,15 @@ export class SearchSimilarClibbitsCommand {
               return; // User cancelled
             }
 
-            // Fetch full clibbit content
-            progress.report({ message: "Fetching clibbit content..." });
-            const clibbitContent = await this.fetchClibbitContent(
+            // Fetch full clibbit data
+            progress.report({ message: "Fetching clibbit data..." });
+            const clibbit = await this.fetchClibbitContent(
               selectedItem.id
             );
 
-            // Save clibbit to file
+            // Save clibbit to file with frontmatter
             progress.report({ message: "Saving clibbit to prompts folder..." });
-            const filePath = await this.saveClibbitToFile(
-              selectedItem.label,
-              clibbitContent
-            );
+            const filePath = await this.saveClibbitToFile(clibbit);
 
             vscode.window.showInformationMessage(
               `Clibbit saved to ${path.basename(filePath)}`
