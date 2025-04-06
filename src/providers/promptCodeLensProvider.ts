@@ -5,8 +5,8 @@ import { isAuthenticated } from "../utils/authUtils";
 /**
  * CodeLensProvider that adds buttons to files:
  * - "New" and "Search" buttons to all files
- * - If logged in: "Share", "Sign Out", and "Save" buttons to prompt files
- * - If logged out: "Sign In" and "Save" buttons to prompt files
+ * - If logged in: "Save" and "Sign Out" buttons to prompt files
+ * - If logged out: "Sign In" button to prompt files
  */
 export class PromptCodeLensProvider implements vscode.CodeLensProvider {
   private codeLenses: vscode.CodeLens[] = [];
@@ -26,7 +26,7 @@ export class PromptCodeLensProvider implements vscode.CodeLensProvider {
 
     // Listen for the refreshCodeLens command
     this.context.subscriptions.push(
-      vscode.commands.registerCommand("clibbits.refreshCodeLens", () => {
+      vscode.commands.registerCommand('clibbits.refreshCodeLens', () => {
         this._onDidChangeCodeLenses.fire();
       })
     );
@@ -66,7 +66,7 @@ export class PromptCodeLensProvider implements vscode.CodeLensProvider {
       arguments: [],
     };
     this.codeLenses.push(newLens);
-
+    
     // Add "Search" button to all files
     const searchLens = new vscode.CodeLens(range);
     searchLens.command = {
@@ -79,30 +79,20 @@ export class PromptCodeLensProvider implements vscode.CodeLensProvider {
 
     // Add authentication-related buttons only to prompt files in the .github/prompts/clibbits directory
     if (this.isPromptFile(document)) {
-      // Add "Save" button (always shown)
-      const saveLens = new vscode.CodeLens(range);
-      saveLens.command = {
-        title: "💾 Save",
-        tooltip: "Export this prompt",
-        command: "clibbits.exportPrompt",
-        arguments: [document.uri],
-      };
-      this.codeLenses.push(saveLens);
-
       // Check authentication state
       const isUserAuthenticated = await isAuthenticated(this.context);
 
       if (isUserAuthenticated) {
-        // User is authenticated, show "Share" button
-        const shareLens = new vscode.CodeLens(range);
-        shareLens.command = {
-          title: "📤 Share",
-          tooltip: "Share this prompt",
-          command: "clibbits.shareClibbit",
+        // User is authenticated, show "Save" button (replaces "Share")
+        const saveLens = new vscode.CodeLens(range);
+        saveLens.command = {
+          title: "💾 Save",
+          tooltip: "Save this prompt to Clibbits",
+          command: "clibbits.shareClibbit", // Keep using the same command
           arguments: [document.uri],
         };
-        this.codeLenses.push(shareLens);
-
+        this.codeLenses.push(saveLens);
+        
         // Add "Sign Out" button when user is authenticated
         const signOutLens = new vscode.CodeLens(range);
         signOutLens.command = {
@@ -117,7 +107,7 @@ export class PromptCodeLensProvider implements vscode.CodeLensProvider {
         const signInLens = new vscode.CodeLens(range);
         signInLens.command = {
           title: "🔑 Sign In",
-          tooltip: "Sign in to share prompts",
+          tooltip: "Sign in to save prompts",
           command: "clibbits.signIn",
           arguments: [],
         };

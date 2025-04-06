@@ -34,7 +34,7 @@ export class ShareClibbitCommand {
           const sessionStr = await context.secrets.get('supabase.session');
           if (!sessionStr) {
             vscode.window.showInformationMessage(
-              "You need to sign in to share clibbits",
+              "You need to sign in to save clibbits",
               "Sign In"
             ).then(selection => {
               if (selection === "Sign In") {
@@ -74,7 +74,7 @@ export class ShareClibbitCommand {
           await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Notification,
-              title: "Sharing clibbit...",
+              title: "Saving clibbit...",
               cancellable: false,
             },
             async (progress) => {
@@ -131,7 +131,7 @@ export class ShareClibbitCommand {
                 }
               }
               
-              progress.report({ message: "Saving to Supabase..." });
+              progress.report({ message: "Saving to Clibbits..." });
               
               // Check if this is an update or a new clibbit
               const isUpdate = !!data.id;
@@ -178,7 +178,7 @@ export class ShareClibbitCommand {
                   throw new Error(error.message);
                 }
                 
-                vscode.window.showInformationMessage(`Clibbit updated successfully with ID: ${clibbitId}`);
+                vscode.window.showInformationMessage(`Clibbit saved successfully with ID: ${clibbitId}`);
               } else {
                 // Insert new clibbit
                 clibbitId = crypto.randomUUID(); // Generate a new UUID
@@ -226,7 +226,7 @@ export class ShareClibbitCommand {
                 
                 // Add the ID to the frontmatter data
                 data.id = clibbitId;
-                vscode.window.showInformationMessage(`Clibbit shared successfully with ID: ${clibbitId}`);
+                vscode.window.showInformationMessage(`Clibbit saved successfully with ID: ${clibbitId}`);
               }
               
               // Always update the file with the latest frontmatter (including tags)
@@ -237,7 +237,7 @@ export class ShareClibbitCommand {
           );
         } catch (error) {
           vscode.window.showErrorMessage(
-            `Failed to share clibbit: ${error instanceof Error ? error.message : "Unknown error"}`
+            `Failed to save clibbit: ${error instanceof Error ? error.message : "Unknown error"}`
           );
         }
       }

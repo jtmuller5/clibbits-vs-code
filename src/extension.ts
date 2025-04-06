@@ -15,7 +15,7 @@ import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWitho
 import { AddToClibbitCodeLensProvider, PromptCodeLensProvider } from "./providers";
 import { initializeSupabaseWithSession } from "./supabase/client";
 import { SupabaseStatusBar } from "./supabase/statusBar";
-import { CreateClibbitFolderCommand, CreateClibbitCommand, ExportClibbitCommand, ImportClibbitCommand, AddToClibbitCommand } from "./commands/prompts";
+import { CreateClibbitFolderCommand, CreateClibbitCommand, ImportClibbitCommand, AddToClibbitCommand } from "./commands/prompts";
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel
@@ -50,7 +50,6 @@ export function activate(context: vscode.ExtensionContext) {
       CopyTreeStructureCommand.register(context),
       CreateClibbitFolderCommand.register(context),
       CreateClibbitCommand.register(context),
-      ExportClibbitCommand.register(context),
       ImportClibbitCommand.register(context),
       SignInCommand.register(context),
       SignOutCommand.register(context),
