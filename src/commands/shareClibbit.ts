@@ -109,6 +109,8 @@ export class ShareClibbitCommand {
                       const generatedTags = JSON.parse(tagsText);
                       if (Array.isArray(generatedTags)) {
                         tags = generatedTags;
+                        // Add tags to frontmatter data
+                        data.tags = tags;
                       }
                     } catch (e) {
                       console.error("Failed to parse tags:", e);
@@ -116,6 +118,8 @@ export class ShareClibbitCommand {
                       const tagMatches = tagsText.match(/["']([^"']+)["']/g);
                       if (tagMatches) {
                         tags = tagMatches.map(tag => tag.replace(/["']/g, ''));
+                        // Add tags to frontmatter data
+                        data.tags = tags;
                       }
                     }
                   }
@@ -127,47 +131,75 @@ export class ShareClibbitCommand {
               
               progress.report({ message: "Saving to Supabase..." });
               
-              // Prepare clibbit data
-              const clibbitData: Omit<Clibbit, 'id'> = {
-                title: data.title,
-                content_preview: contentPreview,
-                content: clibbitContent,
-                prompt: data.prompt || "",
-                instructions: data.instructions || "",
-                tags: tags,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                user_id: userId,
-                upvotes: 0,
-                downvotes: 0,
-                sources: data.sources || []
-              };
+              // Check if this is an update or a new clibbit
+              const isUpdate = !!data.id;
+              let clibbitId: string;
               
-              // Save to Supabase
-              const { data: insertedData, error } = await supabaseClient
-                .from('clibbits')
-                .insert(clibbitData)
-                .select('id')
-                .single();
-              
-              if (error) {
-                throw new Error(error.message);
+              if (isUpdate) {
+                // Update existing clibbit
+                const clibbitData: Partial<Clibbit> = {
+                  title: data.title,
+                  content_preview: contentPreview,
+                  content: clibbitContent,
+                  prompt: data.prompt || "",
+                  instructions: data.instructions || "",
+                  tags: tags,
+                  updated_at: new Date().toISOString(),
+                  sources: data.sources || []
+                };
+                
+                const { error } = await supabaseClient
+                  .from('clibbits')
+                  .update(clibbitData)
+                  .eq('id', data.id);
+                
+                if (error) {
+                  throw new Error(error.message);
+                }
+                
+                clibbitId = data.id;
+                vscode.window.showInformationMessage(`Clibbit updated successfully with ID: ${clibbitId}`);
+              } else {
+                // Insert new clibbit
+                const clibbitData: Omit<Clibbit, 'id'> = {
+                  title: data.title,
+                  content_preview: contentPreview,
+                  content: clibbitContent,
+                  prompt: data.prompt || "",
+                  instructions: data.instructions || "",
+                  tags: tags,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                  user_id: userId,
+                  upvotes: 0,
+                  downvotes: 0,
+                  sources: data.sources || []
+                };
+                
+                const { data: insertedData, error } = await supabaseClient
+                  .from('clibbits')
+                  .insert(clibbitData)
+                  .select('id')
+                  .single();
+                
+                if (error) {
+                  throw new Error(error.message);
+                }
+                
+                if (!insertedData?.id) {
+                  throw new Error("Failed to get ID for new clibbit");
+                }
+                
+                clibbitId = insertedData.id;
+                // Add the ID to the frontmatter data
+                data.id = clibbitId;
+                vscode.window.showInformationMessage(`Clibbit shared successfully with ID: ${clibbitId}`);
               }
               
-              if (insertedData?.id) {
-                progress.report({ message: "Updating file with ID..." });
-                
-                // Update the frontmatter with the new ID
-                data.id = insertedData.id;
-                
-                // Create updated content with new frontmatter
-                const updatedContent = matter.stringify(clibbitContent, data);
-                
-                // Write the updated content back to the file
-                fs.writeFileSync(filePath, updatedContent);
-                
-                vscode.window.showInformationMessage(`Clibbit shared successfully with ID: ${insertedData.id}`);
-              }
+              // Always update the file with the latest frontmatter (including tags)
+              progress.report({ message: "Updating file with frontmatter..." });
+              const updatedContent = matter.stringify(clibbitContent, data);
+              fs.writeFileSync(filePath, updatedContent);
             }
           );
         } catch (error) {
