@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import { supabaseClient } from "../supabase/client";
-import matter from 'gray-matter';
+import matter from "gray-matter";
 
 export interface Clibbit {
   id: string;
@@ -16,6 +16,9 @@ export interface Clibbit {
   instructions?: string;
   sources?: string[];
   content_preview?: string;
+  source?: string;
+  upvotes: number;
+  downvotes: number;
 }
 
 interface SimilaritySearchResult {
@@ -45,7 +48,6 @@ export class SearchClibbitsCommand {
     query: string
   ): Promise<SimilaritySearchResponse> {
     try {
-
       const supabaseAnonKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphZmtkcWVmanZoZmJ5dWlndWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzUwOTAsImV4cCI6MjA1ODM1MTA5MH0.Q28wXI1Ph6uyO4XGzN3bTZmJKqk-SXJjJ-DvBQZNdjY";
       // Note: We still need to use the edge function for similarity search
@@ -81,14 +83,14 @@ export class SearchClibbitsCommand {
   private static async performExactSearch(query: string): Promise<Clibbit[]> {
     try {
       // Remove quotes if they exist
-      const cleanQuery = query.replace(/^"|"$/g, '');
-      
+      const cleanQuery = query.replace(/^"|"$/g, "");
+
       // Search for clibbits where title contains the query (case insensitive)
       const { data: clibbits, error } = await supabaseClient
-        .from('clibbits')
-        .select('*')
-        .ilike('title', `%${cleanQuery}%`)
-        .order('title', { ascending: true });
+        .from("clibbits")
+        .select("*")
+        .ilike("title", `%${cleanQuery}%`)
+        .order("title", { ascending: true });
 
       if (error) {
         throw new Error(error.message);
@@ -149,9 +151,9 @@ export class SearchClibbitsCommand {
 
       // Create a filename from the title
       const kebabCaseTitle = clibbit.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "");
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 
       const filePath = path.join(promptsDir, `${kebabCaseTitle}.prompt.md`);
 
@@ -159,13 +161,17 @@ export class SearchClibbitsCommand {
       const frontmatter: Record<string, any> = {
         id: clibbit.id,
         title: clibbit.title,
-        tags: clibbit.tags || []
+        tags: clibbit.tags || [],
       };
-      
+
       // Only add optional fields if they exist and are not null/undefined
       if (clibbit.prompt) frontmatter.prompt = clibbit.prompt;
       if (clibbit.instructions) frontmatter.instructions = clibbit.instructions;
-      if (clibbit.sources && Array.isArray(clibbit.sources) && clibbit.sources.length > 0) {
+      if (
+        clibbit.sources &&
+        Array.isArray(clibbit.sources) &&
+        clibbit.sources.length > 0
+      ) {
         frontmatter.sources = clibbit.sources;
       }
 
@@ -183,80 +189,46 @@ export class SearchClibbitsCommand {
   }
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
-    return vscode.commands.registerCommand(this.commandName, async (selectedText?: string) => {
-      try {
-        // First, check if user is signed in
-        const sessionStr = await context.secrets.get('supabase.session');
-        if (!sessionStr) {
-          vscode.window.showInformationMessage(
-            "You need to sign in to search clibbits",
-            "Sign In"
-          ).then(selection => {
-            if (selection === "Sign In") {
-              vscode.commands.executeCommand("clibbits.signIn");
-            }
-          });
-          return;
-        }
-
-        // Get search query - either from parameter (for code lens) or from user input
-        let query = selectedText || "";
-        
-        // If no text was provided from code lens, get it from the editor selection
-        if (!query) {
-          const editor = vscode.window.activeTextEditor;
-          if (editor) {
-            const selection = editor.selection;
-            if (!selection.isEmpty) {
-              query = editor.document.getText(selection);
-            }
+    return vscode.commands.registerCommand(
+      this.commandName,
+      async (selectedText?: string) => {
+        try {
+          // First, check if user is signed in
+          const sessionStr = await context.secrets.get("supabase.session");
+          if (!sessionStr) {
+            vscode.window
+              .showInformationMessage(
+                "You need to sign in to search clibbits",
+                "Sign In"
+              )
+              .then((selection) => {
+                if (selection === "Sign In") {
+                  vscode.commands.executeCommand("clibbits.signIn");
+                }
+              });
+            return;
           }
-        }
 
-        // If still no query, prompt the user for input
-        if (!query) {
-          const inputQuery = await vscode.window.showInputBox({
-            prompt: "Search for clibbits",
-            placeHolder: 'Use "quotes" for exact title search or regular text for similarity search',
-            ignoreFocusOut: true,
-            validateInput: (value) => {
-              if (!value || value.trim().length === 0) {
-                return "Please enter text to search for clibbits";
+          // Get search query - either from parameter (for code lens) or from user input
+          let query = selectedText || "";
+
+          // If no text was provided from code lens, get it from the editor selection
+          if (!query) {
+            const editor = vscode.window.activeTextEditor;
+            if (editor) {
+              const selection = editor.selection;
+              if (!selection.isEmpty) {
+                query = editor.document.getText(selection);
               }
-              return null; // Input is valid
-            },
-          });
-
-          if (!inputQuery) {
-            return; // User cancelled
+            }
           }
 
-          query = inputQuery;
-        } else {
-          // If text was selected, ask if the user wants to refine the query
-          const refineOption = await vscode.window.showQuickPick(
-            [
-              {
-                label: "Use selected text",
-                description: `"${query.length > 50 ? query.substring(0, 50) + "..." : query}"`,
-              },
-              {
-                label: "Refine query",
-                description: "Enter a different search query",
-              },
-            ],
-            { placeHolder: "Use selected text or enter a new query?" }
-          );
-
-          if (!refineOption) {
-            return; // User cancelled
-          }
-
-          if (refineOption.label === "Refine query") {
+          // If still no query, prompt the user for input
+          if (!query) {
             const inputQuery = await vscode.window.showInputBox({
               prompt: "Search for clibbits",
-              placeHolder: 'Use "quotes" for exact title search or regular text for similarity search',
-              value: query, // Pre-populate with selected text
+              placeHolder:
+                'Use "quotes" for exact title search or regular text for similarity search',
               ignoreFocusOut: true,
               validateInput: (value) => {
                 if (!value || value.trim().length === 0) {
@@ -271,121 +243,186 @@ export class SearchClibbitsCommand {
             }
 
             query = inputQuery;
+          } else {
+            // If text was selected, ask if the user wants to refine the query
+            const refineOption = await vscode.window.showQuickPick(
+              [
+                {
+                  label: "Use selected text",
+                  description: `"${
+                    query.length > 50 ? query.substring(0, 50) + "..." : query
+                  }"`,
+                },
+                {
+                  label: "Refine query",
+                  description: "Enter a different search query",
+                },
+              ],
+              { placeHolder: "Use selected text or enter a new query?" }
+            );
+
+            if (!refineOption) {
+              return; // User cancelled
+            }
+
+            if (refineOption.label === "Refine query") {
+              const inputQuery = await vscode.window.showInputBox({
+                prompt: "Search for clibbits",
+                placeHolder:
+                  'Use "quotes" for exact title search or regular text for similarity search',
+                value: query, // Pre-populate with selected text
+                ignoreFocusOut: true,
+                validateInput: (value) => {
+                  if (!value || value.trim().length === 0) {
+                    return "Please enter text to search for clibbits";
+                  }
+                  return null; // Input is valid
+                },
+              });
+
+              if (!inputQuery) {
+                return; // User cancelled
+              }
+
+              query = inputQuery;
+            }
           }
-        }
 
-        // Determine search method based on query format
-        const isExactSearch = /^".*"$/.test(query.trim());
+          // Determine search method based on query format
+          const isExactSearch = /^".*"$/.test(query.trim());
 
-        // Show progress indicator
-        await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: `${isExactSearch ? "Exact" : "Similarity"} searching clibbits...`,
-            cancellable: false,
-          },
-          async (progress) => {
-            let clibbits: Clibbit[] = [];
-            let selectedClibbit: Clibbit | undefined;
+          // Show progress indicator
+          await vscode.window.withProgress(
+            {
+              location: vscode.ProgressLocation.Notification,
+              title: `${
+                isExactSearch ? "Exact" : "Similarity"
+              } searching clibbits...`,
+              cancellable: false,
+            },
+            async (progress) => {
+              let clibbits: Clibbit[] = [];
+              let selectedClibbit: Clibbit | undefined;
 
-            // Perform appropriate search based on query format
-            if (isExactSearch) {
-              // Exact title search
-              clibbits = await this.performExactSearch(query);
-            } else {
-              // Similarity search
-              const searchResult = await this.performSimilaritySearch(query);
+              // Perform appropriate search based on query format
+              if (isExactSearch) {
+                // Exact title search
+                clibbits = await this.performExactSearch(query);
+              } else {
+                // Similarity search
+                const searchResult = await this.performSimilaritySearch(query);
 
-              // Map similarity search results to format compatible with our UI flow
-              if (searchResult.results && searchResult.results.length > 0) {
-                // Just store the IDs for now - we'll fetch full clibbits if selected
-                const similarClibbitsIds = searchResult.results.map(result => ({
-                  id: result.id,
-                  title: result.title,
-                  similarity: result.similarity
+                // Map similarity search results to format compatible with our UI flow
+                if (searchResult.results && searchResult.results.length > 0) {
+                  // Just store the IDs for now - we'll fetch full clibbits if selected
+                  const similarClibbitsIds = searchResult.results.map(
+                    (result) => ({
+                      id: result.id,
+                      title: result.title,
+                      similarity: result.similarity,
+                    })
+                  );
+
+                  // Create QuickPick items for similarity results
+                  const items = similarClibbitsIds.map((item) => ({
+                    label: item.title,
+                    description: `Similarity: ${Math.round(
+                      item.similarity * 100
+                    )}%`,
+                    detail: `ID: ${item.id}`,
+                    id: item.id,
+                  }));
+
+                  // Show QuickPick with similarity results
+                  const selected = await vscode.window.showQuickPick(items, {
+                    placeHolder: `Found ${items.length} similar clibbits. Select one to load...`,
+                    matchOnDescription: true,
+                    matchOnDetail: true,
+                  });
+
+                  if (!selected) {
+                    return; // User cancelled
+                  }
+
+                  // Fetch the full clibbit data for the selected item
+                  selectedClibbit = await this.fetchClibbitById(selected.id);
+
+                  if (!selectedClibbit) {
+                    vscode.window.showErrorMessage(
+                      "Failed to fetch clibbit data"
+                    );
+                    return;
+                  }
+                } else {
+                  vscode.window.showInformationMessage(
+                    `No similar clibbits found for "${query}"`
+                  );
+                  return;
+                }
+              }
+
+              // For exact search, show the quick pick menu with results
+              if (isExactSearch) {
+                if (!clibbits || clibbits.length === 0) {
+                  vscode.window.showInformationMessage(
+                    `No clibbits found matching "${query}"`
+                  );
+                  return;
+                }
+
+                // Create QuickPick items for exact search results
+                const items = clibbits.map((clibbit) => ({
+                  label: clibbit.title,
+                  description: `Tags: ${
+                    clibbit.tags ? clibbit.tags.join(", ") : ""
+                  }`,
+                  detail: clibbit.content_preview,
+                  clibbit: clibbit,
                 }));
 
-                // Create QuickPick items for similarity results
-                const items = similarClibbitsIds.map(item => ({
-                  label: item.title,
-                  description: `Similarity: ${Math.round(item.similarity * 100)}%`,
-                  detail: `ID: ${item.id}`,
-                  id: item.id
-                }));
-
-                // Show QuickPick with similarity results
+                // Show QuickPick with results
                 const selected = await vscode.window.showQuickPick(items, {
-                  placeHolder: `Found ${items.length} similar clibbits. Select one to load...`,
+                  placeHolder: `Found ${clibbits.length} clibbits. Select one to load...`,
                   matchOnDescription: true,
-                  matchOnDetail: true
+                  matchOnDetail: true,
                 });
 
                 if (!selected) {
                   return; // User cancelled
                 }
 
-                // Fetch the full clibbit data for the selected item
-                selectedClibbit = await this.fetchClibbitById(selected.id);
-                
-                if (!selectedClibbit) {
-                  vscode.window.showErrorMessage("Failed to fetch clibbit data");
-                  return;
-                }
-              } else {
-                vscode.window.showInformationMessage(`No similar clibbits found for "${query}"`);
-                return;
-              }
-            }
-
-            // For exact search, show the quick pick menu with results
-            if (isExactSearch) {
-              if (!clibbits || clibbits.length === 0) {
-                vscode.window.showInformationMessage(`No clibbits found matching "${query}"`);
-                return;
+                // Get the selected clibbit
+                selectedClibbit = selected.clibbit as Clibbit;
               }
 
-              // Create QuickPick items for exact search results
-              const items = clibbits.map(clibbit => ({
-                label: clibbit.title,
-                description: `Tags: ${clibbit.tags ? clibbit.tags.join(', ') : ''}`,
-                detail: clibbit.content_preview,
-                clibbit: clibbit
-              }));
+              // Process the selected clibbit (from either search method)
+              if (selectedClibbit) {
+                // Save clibbit to file
+                progress.report({
+                  message: "Saving clibbit to prompts folder...",
+                });
+                const filePath = await this.saveClibbitToFile(selectedClibbit);
 
-              // Show QuickPick with results
-              const selected = await vscode.window.showQuickPick(items, {
-                placeHolder: `Found ${clibbits.length} clibbits. Select one to load...`,
-                matchOnDescription: true,
-                matchOnDetail: true
-              });
+                // Open the file in the editor
+                const document = await vscode.workspace.openTextDocument(
+                  filePath
+                );
+                await vscode.window.showTextDocument(document);
 
-              if (!selected) {
-                return; // User cancelled
+                vscode.window.showInformationMessage(
+                  `Loaded clibbit "${selectedClibbit.title}" successfully`
+                );
               }
-
-              // Get the selected clibbit
-              selectedClibbit = selected.clibbit as Clibbit;
             }
-
-            // Process the selected clibbit (from either search method)
-            if (selectedClibbit) {
-              // Save clibbit to file
-              progress.report({ message: "Saving clibbit to prompts folder..." });
-              const filePath = await this.saveClibbitToFile(selectedClibbit);
-
-              // Open the file in the editor
-              const document = await vscode.workspace.openTextDocument(filePath);
-              await vscode.window.showTextDocument(document);
-
-              vscode.window.showInformationMessage(`Loaded clibbit "${selectedClibbit.title}" successfully`);
-            }
-          }
-        );
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          `Failed to search clibbits: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
+          );
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `Failed to search clibbits: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`
+          );
+        }
       }
-    });
+    );
   }
 }

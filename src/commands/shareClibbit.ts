@@ -4,23 +4,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { supabaseClient } from "../supabase/client";
 import matter from 'gray-matter';
-
-export interface Clibbit {
-  id: string;
-  title: string;
-  content_preview: string;
-  content: string;
-  prompt?: string;
-  instructions?: string;
-  tags: string[];
-  created_at: string;
-  updated_at: string;
-  user_id: string;
-  upvotes: number;
-  downvotes: number;
-  sources: string[];
-  source?: string;
-}
+import { Clibbit } from "./searchClibbits";
 
 export class ShareClibbitCommand {
   public static readonly commandName = "clibbits.shareClibbit";
