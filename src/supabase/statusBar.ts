@@ -49,7 +49,7 @@ export class SupabaseStatusBar {
 
   private showSignedOut(): void {
     this.statusBarItem.text = `$(person) Sign In`;
-    this.statusBarItem.tooltip = 'Sign in to Supabase';
+    this.statusBarItem.tooltip = 'Sign in to Clibbits';
     this.statusBarItem.command = 'clibbits.signIn';
     this.statusBarItem.show();
   }

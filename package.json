@@ -1,7 +1,7 @@
 {
   "name": "clibbits",
-  "displayName": "Clibbits: Copy Code For AI",
-  "description": "Copy contents of files to clipboard",
+  "displayName": "Clibbits",
+  "description": "Control your context, control your life",
   "version": "3.3.0",
   "publisher": "codeontherocks",
   "icon": "clibbits.png",
