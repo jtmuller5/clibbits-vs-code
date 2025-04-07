@@ -50,6 +50,15 @@ export class SearchClibbitsCommand {
     try {
       const supabaseAnonKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphZmtkcWVmanZoZmJ5dWlndWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzUwOTAsImV4cCI6MjA1ODM1MTA5MH0.Q28wXI1Ph6uyO4XGzN3bTZmJKqk-SXJjJ-DvBQZNdjY";
+
+      const uid = (await supabaseClient.auth.getUser()).data.user?.id;
+
+      console.log("User ID:", uid);
+
+      if(!uid){
+        throw new Error("User ID not found");
+      }
+
       // Note: We still need to use the edge function for similarity search
       // as this requires pgvector operations that can't be done with the client directly
       const response = await fetch(
@@ -60,7 +69,10 @@ export class SearchClibbitsCommand {
             "Content-Type": "application/json",
             Authorization: `Bearer ${supabaseAnonKey}`,
           },
-          body: JSON.stringify({ query }),
+          body: JSON.stringify({
+            query,
+            user_id: uid,
+          }),
         }
       );
 
