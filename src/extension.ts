@@ -10,7 +10,6 @@ import {
   SignOutCommand,
   ShareClibbitCommand,
   SearchClibbitsCommand,
-  SearchSimilarClibbitsCommand,
 } from "./commands";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 import { AddToClibbitCodeLensProvider, PromptCodeLensProvider } from "./providers";
@@ -56,7 +55,6 @@ export function activate(context: vscode.ExtensionContext) {
       SignOutCommand.register(context),
       ShareClibbitCommand.register(context),
       SearchClibbitsCommand.register(context),
-      SearchSimilarClibbitsCommand.register(context),
       ...AddToClibbitCommand.register(context)
     );
     outputChannel.appendLine('Commands registered successfully');
