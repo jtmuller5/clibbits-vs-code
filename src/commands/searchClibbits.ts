@@ -55,7 +55,7 @@ export class SearchClibbitsCommand {
 
       console.log("User ID:", uid);
 
-      if(!uid){
+      if (!uid) {
         throw new Error("User ID not found");
       }
 

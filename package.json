@@ -33,11 +33,17 @@
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.shareClibbit",
     "onCommand:clibbits.searchClibbits",
+    "onCommand:clibbits.addToStack",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clibbits.addToStack",
+        "title": "Add to Stack",
+        "category": "Clibbits"
+      },
       {
         "command": "clibbits.searchClibbits",
         "title": "Search Clibbits",
@@ -284,6 +290,7 @@
           "default": true,
           "description": "Enable Code Lens for adding selected code to clibbits"
         }
+
       }
     }
   },

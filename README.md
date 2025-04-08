@@ -59,6 +59,13 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - System folders (like node_modules, .git) are automatically excluded
 - Perfect for documenting project structures or sharing folder organization in discussions
 
+### 🔍 Add Libbit to Prompt Stack
+- Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+- Select "Clibbits: Add to Stack"
+- Choose a category and select a Libbit from the search results
+- The extension will create a prompt file with all associated Clibbits
+- Perfect for integrating with GitHub Copilot's prompt files feature
+
 ### 📝 Create and Manage Clibbits
 - Create reusable clibbits for GitHub Copilot and other AI assistants
 - Store and organize code snippets for common patterns or reference

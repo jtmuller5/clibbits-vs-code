@@ -11,35 +11,44 @@ import {
   ShareClibbitCommand,
   SearchClibbitsCommand,
 } from "./commands";
+import { AddToStackCommand } from "./commands/addToStack";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
-import { AddToClibbitCodeLensProvider, PromptCodeLensProvider } from "./providers";
+import {
+  AddToClibbitCodeLensProvider,
+  PromptCodeLensProvider,
+} from "./providers";
 import { initializeSupabaseWithSession } from "./supabase/client";
 import { SupabaseStatusBar } from "./supabase/statusBar";
-import { CreateClibbitFolderCommand, CreateClibbitCommand, ImportClibbitCommand, AddToClibbitCommand } from "./commands/prompts";
+import {
+  CreateClibbitFolderCommand,
+  CreateClibbitCommand,
+  ImportClibbitCommand,
+  AddToClibbitCommand,
+} from "./commands/prompts";
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel
-  const outputChannel = vscode.window.createOutputChannel('Clibbits');
-  outputChannel.appendLine('Activating Clibbits extension');
-  
+  const outputChannel = vscode.window.createOutputChannel("Clibbits");
+  outputChannel.appendLine("Activating Clibbits extension");
+
   // Create a status bar item for Supabase authentication
   const statusBar = new SupabaseStatusBar(context);
   context.subscriptions.push(statusBar);
-  
+
   try {
     // Initialize Supabase with existing session if available
-    outputChannel.appendLine('Initializing Supabase client...');
-    context.secrets.get('supabase.session').then(sessionString => {
+    outputChannel.appendLine("Initializing Supabase client...");
+    context.secrets.get("supabase.session").then((sessionString) => {
       if (sessionString) {
         initializeSupabaseWithSession(sessionString);
-        outputChannel.appendLine('Supabase session restored');
+        outputChannel.appendLine("Supabase session restored");
       } else {
-        outputChannel.appendLine('No Supabase session found');
+        outputChannel.appendLine("No Supabase session found");
       }
     });
-    
+
     // Register commands
-    outputChannel.appendLine('Registering commands...');
+    outputChannel.appendLine("Registering commands...");
     context.subscriptions.push(
       CopyAllFilesCommand.register(context),
       CopyFileCommand.register(context),
@@ -55,29 +64,30 @@ export function activate(context: vscode.ExtensionContext) {
       SignOutCommand.register(context),
       ShareClibbitCommand.register(context),
       SearchClibbitsCommand.register(context),
-      ...AddToClibbitCommand.register(context)
+      ...AddToClibbitCommand.register(context),
+      AddToStackCommand.register(context)
     );
-    outputChannel.appendLine('Commands registered successfully');
+    outputChannel.appendLine("Commands registered successfully");
 
     // Register code lens providers
-    outputChannel.appendLine('Registering code lens providers...');
+    outputChannel.appendLine("Registering code lens providers...");
     const addToClibbitCodeLensProvider = new AddToClibbitCodeLensProvider();
     const promptCodeLensProvider = new PromptCodeLensProvider(context);
-    
-    context.subscriptions.push(
+
+    /* context.subscriptions.push(
       vscode.languages.registerCodeLensProvider(
-        ['*'], // Apply to all files
+        ["*"], // Apply to all files
         addToClibbitCodeLensProvider
-      ),
-      vscode.languages.registerCodeLensProvider(
+      )
+       vscode.languages.registerCodeLensProvider(
         '*', // Apply to all files
         promptCodeLensProvider
-      )
-    );
-    outputChannel.appendLine('Code lens providers registered successfully');
+      ) 
+    ); */
+    outputChannel.appendLine("Code lens providers registered successfully");
   } catch (error) {
     outputChannel.appendLine(`Error during activation: ${error}`);
-    console.error('Error activating Clibbits:', error);
+    console.error("Error activating Clibbits:", error);
   }
 }
 
