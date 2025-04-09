@@ -18,7 +18,7 @@ import {
 } from "./providers";
 import { initializeSupabaseWithSession } from "./supabase/client";
 import { SupabaseStatusBar } from "./supabase/statusBar";
-import { AddToClibbitCommand } from "./commands/prompts";
+import { AddToClibbitCommand, CreateClibbitCommand, CreateClibbitFolderCommand } from "./commands/prompts";
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel
@@ -51,6 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
       CopyWithoutCommentsCommand.register(context),
       CopyAllFilesWithoutCommentsCommand.register(context),
       CopyTreeStructureCommand.register(context),
+      CreateClibbitFolderCommand.register(context),
+      CreateClibbitCommand.register(context),
       SignInCommand.register(context),
       SignOutCommand.register(context),
       ...AddToClibbitCommand.register(context),

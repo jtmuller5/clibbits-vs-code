@@ -27,6 +27,9 @@
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.addToStack",
     "onCommand:clibbits.requestLibrary",
+    "onCommand:clibbits.createClibbit",
+    "onCommand:clibbits.addToClibbit",
+    "onCommand:clibbits.addToClibbit.file",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
@@ -96,6 +99,26 @@
       {
         "command": "clibbits.requestLibrary",
         "title": "Request New Library Support",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.createClibbitFolder",
+        "title": "Create Clibbits Folder",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.createClibbit",
+        "title": "Create Clibbit",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.addToClibbit",
+        "title": "Add to Clibbit",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.addToClibbit.file",
+        "title": "Add to Clibbit",
         "category": "Clibbits"
       }
     ],
