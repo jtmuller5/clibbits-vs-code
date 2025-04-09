@@ -1,16 +1,7 @@
-#### Sharing Clibbits Between Projects
-- **Export Clibbit:**
-  - Use the Command Palette and select "Clibbits: Export Clibbit"
-  - Choose which clibbit to export from your workspace
-  - The clibbit will be saved to a shared location (in your home directory)
+Clibbits is a Visual Studio Code extension that makes vibe coding more enjoyable 😎
 
-- **Import Clibbit:**
-  - Use the Command Palette and select "Clibbits: Import Clibbit"
-  - Choose which clibbit to import from the shared location
-  - The clibbit will be copied to your workspace
-  - The imported clibbit will open automatically# Clibbits
-
-Clibbits is a Visual Studio Code extension that simplifies copying file contents to your clipboard. Whether you need to copy a single file, multiple selected files, all open files, or specific code blocks, Clibbits provides convenient commands to handle these operations efficiently. This extension was designed for working with LLMs that exist outside of VS Code.
+1. Simplifies copying file contents to your clipboard. Copy entire files, open editors, or directories to your clipboard.
+2. Makes importing technical documentation a breeze. Search for docs related to authentication, navigation, analytics, and more and instantly add them to your project.
 
 ## Features
 
@@ -59,49 +50,17 @@ Clibbits is a Visual Studio Code extension that simplifies copying file contents
 - System folders (like node_modules, .git) are automatically excluded
 - Perfect for documenting project structures or sharing folder organization in discussions
 
-### 🔍 Add Libbit to Prompt Stack
+### 🔍 Add Stack Context
 - Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 - Select "Clibbits: Add to Stack"
-- Choose a category and select a Libbit from the search results
-- The extension will create a prompt file with all associated Clibbits
-- Perfect for integrating with GitHub Copilot's prompt files feature
+- Choose a category and select an item from the search results
+- The extension will create a prompt file with all associated documentation in the `.github/prompts/clibbits` directory
 
-### 📝 Create and Manage Clibbits
-- Create reusable clibbits for GitHub Copilot and other AI assistants
-- Store and organize code snippets for common patterns or reference
-- Quickly add selected code to clibbits for later use
-
-#### Creating Clibbits
-- Use the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and type "Clibbits: Create Clibbits Folder"
-- This creates a `.github/prompts/clibbits` folder in your workspace
-- Use "Clibbits: Create Clibbit" to create a new clibbit with a template
-
-#### Adding Code to Clibbits
-- **From Editor Selection:**
-  - Select code in your editor
-  - **Option 1:** Right-click and select "Clibbits: Add to Clibbit"
-  - **Option 2:** Click the "Add selection to Clibbit" Code Lens that appears above your selection
-  - Choose which clibbit to add the code to from the dropdown menu
-  - The code is automatically added to the "Content" section of the clibbit
-
-- **From Explorer (Files or Folders):**
-  - Right-click on any file or folder in the Explorer
-  - Select "Clibbits: Add to Clibbit"
-  - Choose which clibbit to add the files to
-  - File links will be added to the "Files" section of the clibbit
-  - For folders, links to all text files will be recursively added (up to a reasonable depth)
-
-#### Sharing Clibbits Between Projects
-- **Export Clibbit:**
-  - Use the Command Palette and select "Clibbits: Export Clibbit"
-  - Choose which clibbit to export from your workspace
-  - The clibbit will be saved to a shared location (in your home directory)
-
-- **Import Clibbit:**
-  - Use the Command Palette and select "Clibbits: Import Clibbit"
-  - Choose which clibbit to import from the shared location
-  - The clibbit will be copied to your workspace
-  - The imported clibbit will open automatically
+### 🔎 Search Clibbits
+- Open the Command Palette
+- Select "Clibbits: Search Clibbits"
+- Search for an exact term with quotes or a general term using similarity matching
+- Select the clibbit you want and it will be added to your project
 
 #### Example Clibbit Structure
 

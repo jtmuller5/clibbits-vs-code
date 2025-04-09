@@ -27,8 +27,6 @@
     "onCommand:clibbits.createClibbit",
     "onCommand:clibbits.addToClibbit",
     "onCommand:clibbits.addToClibbit.file",
-    "onCommand:clibbits.exportClibbit",
-    "onCommand:clibbits.importClibbit",
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.searchClibbits",
@@ -123,16 +121,6 @@
         "command": "clibbits.addToClibbit.file",
         "title": "Add to Clibbit",
         "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.exportClibbit",
-        "title": "Export Clibbit",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.importClibbit",
-        "title": "Import Clibbit",
-        "category": "Clibbits"
       }
     ],
     "menus": {
@@ -154,10 +142,6 @@
           "when": "true"
         },
         {
-          "command": "clibbits.shareClibbit",
-          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && !explorerResourceIsFolder"
-        },
-        {
           "command": "clibbits.signIn",
           "when": "true"
         },
@@ -167,11 +151,6 @@
         }
       ],
       "explorer/context": [
-        {
-          "command": "clibbits.shareClibbit",
-          "group": "clibbits@5",
-          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && !explorerResourceIsFolder && workspaceFolderCount != 0"
-        },
         {
           "command": "clibbits.copyFile",
           "group": "5_cutcopypaste",
@@ -196,16 +175,6 @@
           "command": "clibbits.addToClibbit.file",
           "group": "clibbits@3",
           "when": "explorerResourceIsFolder || resourceScheme == file"
-        },
-        {
-          "command": "clibbits.exportClibbit",
-          "group": "clibbits@4",
-          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && workspaceFolderCount != 0"
-        },
-        {
-          "command": "clibbits.importClibbit",
-          "group": "clibbits@4",
-          "when": "resourcePath =~ /.*\\.github\\/prompts\\/clibbits.*/ && workspaceFolderCount != 0"
         }
       ],
       "editor/context": [
@@ -226,11 +195,6 @@
         },
         {
           "command": "clibbits.copyCodeBlock",
-          "group": "5_cutcopypaste",
-          "when": "editorHasSelection"
-        },
-        {
-          "command": "clibbits.addToClibbit",
           "group": "5_cutcopypaste",
           "when": "editorHasSelection"
         },
