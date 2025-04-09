@@ -160,6 +160,11 @@
           "when": "explorerResourceIsFolder || resourceScheme == file",
           "command": "clibbits.copyTreeStructure",
           "group": "clibbits@1"
+        },
+        {
+          "command": "clibbits.addToClibbit.file",
+          "group": "5_cutcopypaste",
+          "when": "explorerResourceIsFolder || !explorerResourceIsFolder"
         }
       ],
       "editor/context": [
