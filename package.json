@@ -182,6 +182,11 @@
           "command": "clibbits.copyAllFiles",
           "group": "5_cutcopypaste",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "clibbits.addToClibbit",
+          "group": "5_cutcopypaste",
+          "when": "editorHasSelection"
         }
       ],
       "editor/title": [
