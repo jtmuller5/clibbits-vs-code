@@ -23,13 +23,8 @@
     "onCommand:clibbits.copyFolderRecursive",
     "onCommand:clibbits.copyWithoutComments",
     "onCommand:clibbits.copyTreeStructure",
-    "onCommand:clibbits.createClibbitFolder",
-    "onCommand:clibbits.createClibbit",
-    "onCommand:clibbits.addToClibbit",
-    "onCommand:clibbits.addToClibbit.file",
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
-    "onCommand:clibbits.searchClibbits",
     "onCommand:clibbits.addToStack",
     "onStartupFinished"
   ],
@@ -39,11 +34,6 @@
       {
         "command": "clibbits.addToStack",
         "title": "Add to Stack",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.searchClibbits",
-        "title": "Search Clibbits",
         "category": "Clibbits"
       },
       {
@@ -101,26 +91,6 @@
       {
         "command": "clibbits.copyTreeStructure",
         "title": "Copy Tree Structure"
-      },
-      {
-        "command": "clibbits.createClibbitFolder",
-        "title": "Create Clibbits Folder",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.createClibbit",
-        "title": "Create Clibbit",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.addToClibbit",
-        "title": "Add to Clibbit",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.addToClibbit.file",
-        "title": "Add to Clibbit",
-        "category": "Clibbits"
       }
     ],
     "menus": {
@@ -137,10 +107,6 @@
         }
       ],
       "commandPalette": [
-        {
-          "command": "clibbits.searchClibbits",
-          "when": "true"
-        },
         {
           "command": "clibbits.signIn",
           "when": "true"
@@ -165,24 +131,9 @@
           "when": "explorerResourceIsFolder || resourceScheme == file",
           "command": "clibbits.copyTreeStructure",
           "group": "clibbits@1"
-        },
-        {
-          "command": "clibbits.createClibbitFolder",
-          "group": "clibbits@2",
-          "when": "explorerResourceIsFolder"
-        },
-        {
-          "command": "clibbits.addToClibbit.file",
-          "group": "clibbits@3",
-          "when": "explorerResourceIsFolder || resourceScheme == file"
         }
       ],
       "editor/context": [
-        {
-          "command": "clibbits.searchClibbits",
-          "group": "clibbits@1",
-          "when": "editorHasSelection"
-        },
         {
           "command": "clibbits.copyFile",
           "group": "5_cutcopypaste",

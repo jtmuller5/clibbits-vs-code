@@ -64,7 +64,7 @@ Clibbits is a Visual Studio Code extension that makes vibe coding more enjoyable
 
 #### Example Clibbit Structure
 
-```markdown
+````markdown
 # analytics
 
 ## Description
@@ -85,7 +85,7 @@ function calculateMetrics(data: MetricsData[]): MetricsSummary {
 ## Files
 - [src/utils/analytics.ts](../../../src/utils/analytics.ts)
 - [src/components/AnalyticsChart.tsx](../../../src/components/AnalyticsChart.tsx)
-```
+````
 
 #### Tree Structure Example
 
@@ -165,23 +165,12 @@ function example() {
    - "Copy File Contents to Clipboard" - Copies current file
    - "Copy All Open Files to Clipboard" - Copies all open files
    - "Copy Code Block to Clipboard" - Copies the current code block
-   - "Create Clibbits Folder" - Creates the .github/prompts/clibbits folder
-   - "Create Clibbit" - Creates a new clibbit
-   - "Add to Clibbit" - Adds selected code to a clibbit
-   - "Export Clibbit" - Exports a clibbit to shared storage
-   - "Import Clibbit" - Imports a clibbit from shared storage
 
 ## Using Clibbits with GitHub Copilot
 
-Clibbits helps you create and manage reusable prompt files (clibbits) that can be used with GitHub Copilot to provide context. Clibbits are structured with sections:
+Clibbits helps you find reusable prompt files (clibbits) that can be used with GitHub Copilot to provide context. To add Clibbits, use the `Clibbits: Add to Stack` command to search the database for docs. Select the library you want and those docs will be added to the `.github/prompts/clibbits` directory.
 
-- **Description**: A brief overview of what this clibbit is for
-- **Instructions**: How the AI should use the clibbit
-- **Context**: Code snippets added by selecting code and using "Add to Clibbit"
-- **Files**: Links to relevant files added by right-clicking in Explorer
-- **References**: Additional documentation or resources
-
-After creating your clibbits:
+After importing your clibbits:
 
 1. Enable prompt files in VS Code:
    - Go to Settings and enable `chat.promptFiles`
