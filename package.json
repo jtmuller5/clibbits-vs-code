@@ -31,7 +31,6 @@
     "onCommand:clibbits.importClibbit",
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
-    "onCommand:clibbits.shareClibbit",
     "onCommand:clibbits.searchClibbits",
     "onCommand:clibbits.addToStack",
     "onStartupFinished"
@@ -47,11 +46,6 @@
       {
         "command": "clibbits.searchClibbits",
         "title": "Search Clibbits",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.shareClibbit",
-        "title": "Share Clibbit",
         "category": "Clibbits"
       },
       {
