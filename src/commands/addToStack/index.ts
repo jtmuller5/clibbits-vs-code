@@ -64,8 +64,8 @@ export class AddToStackCommand {
         }
 
         const workspaceRoot = workspaceFolders[0].uri.fsPath;
-        const sanitizedCategoryName = sanitizeName(selectedCategory);
-        const categoryDir = `${workspaceRoot}/.github/prompts/clibbits/${sanitizedCategoryName}`;
+        const sanitizedLibbitName = sanitizeName(selectedLibbit.name);
+        const categoryDir = `${workspaceRoot}/.github/prompts/clibbits/${sanitizedLibbitName}`;
         const categoryUri = vscode.Uri.file(categoryDir);
 
         // Create base directories and the category-specific directory
