@@ -26,6 +26,7 @@
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.addToStack",
+    "onCommand:clibbits.requestLibrary",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
@@ -91,6 +92,11 @@
       {
         "command": "clibbits.copyTreeStructure",
         "title": "Copy Tree Structure"
+      },
+      {
+        "command": "clibbits.requestLibrary",
+        "title": "Request New Library Support",
+        "category": "Clibbits"
       }
     ],
     "menus": {

@@ -8,6 +8,7 @@ import {
   CopyWithoutCommentsCommand,
   SignInCommand,
   SignOutCommand,
+  RequestLibraryCommand,
 } from "./commands";
 import { AddToStackCommand } from "./commands/addToStack";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
@@ -53,7 +54,8 @@ export function activate(context: vscode.ExtensionContext) {
       SignInCommand.register(context),
       SignOutCommand.register(context),
       ...AddToClibbitCommand.register(context),
-      AddToStackCommand.register(context)
+      AddToStackCommand.register(context),
+      RequestLibraryCommand.register(context)
     );
     outputChannel.appendLine("Commands registered successfully");
 
