@@ -3,6 +3,11 @@ import { CategorySelector } from "./CategorySelector";
 import { LibbitSelector } from "./LibbitSelector";
 import { getLibbitsByCategory, getClibbitsByLibbitId } from "./SupabaseClient";
 
+// Helper function to sanitize names for filesystem paths
+const sanitizeName = (name: string): string => {
+  return name.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+};
+
 export class AddToStackCommand {
   public static readonly commandName = "clibbits.addToStack";
 
@@ -22,13 +27,17 @@ export class AddToStackCommand {
         const libbits = await getLibbitsByCategory(selectedCategory);
 
         if (libbits.length === 0) {
-          vscode.window.showInformationMessage(`No libbits found for category: ${selectedCategory}`);
+          vscode.window.showInformationMessage(
+            `No libbits found for category: ${selectedCategory}`
+          );
           return;
         }
 
         // Show libbit selector
         const libbitSelector = new LibbitSelector();
-        const selectedLibbit = await libbitSelector.showLibbitQuickPick(libbits);
+        const selectedLibbit = await libbitSelector.showLibbitQuickPick(
+          libbits
+        );
 
         if (!selectedLibbit) {
           // User cancelled the libbit selection
@@ -36,20 +45,18 @@ export class AddToStackCommand {
         }
 
         // Get all clibbits for the selected libbit
+        // Assuming getClibbitsByLibbitId returns an array of objects like { id: string, name: string, content: string }
         const clibbits = await getClibbitsByLibbitId(selectedLibbit.id);
 
         if (clibbits.length === 0) {
-          vscode.window.showInformationMessage(`No clibbits found for libbit: ${selectedLibbit.name}`);
+          vscode.window.showInformationMessage(
+            `No clibbits found for libbit: ${selectedLibbit.name}`
+          );
           return;
         }
 
-        // Combine clibbit content
-        let combinedContent = "";
-        for (const clibbit of clibbits) {
-          combinedContent += clibbit.content + "\n\n";
-        }
+        // --- Start of changes ---
 
-        // Save to prompt file
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
           vscode.window.showErrorMessage("No workspace folder found.");
@@ -57,43 +64,53 @@ export class AddToStackCommand {
         }
 
         const workspaceRoot = workspaceFolders[0].uri.fsPath;
+        const sanitizedCategoryName = sanitizeName(selectedCategory);
+        const categoryDir = `${workspaceRoot}/.github/prompts/clibbits/${sanitizedCategoryName}`;
+        const categoryUri = vscode.Uri.file(categoryDir);
 
-        // Create .github/prompts/clibbits folder if it doesn't exist
-        const promptsDir = `${workspaceRoot}/.github/prompts/clibbits`;
-
-        // Use VS Code API to create directories and files
-        await vscode.workspace.fs.createDirectory(vscode.Uri.file(`${workspaceRoot}/.github`));
-        await vscode.workspace.fs.createDirectory(vscode.Uri.file(`${workspaceRoot}/.github/prompts`));
-        await vscode.workspace.fs.createDirectory(vscode.Uri.file(promptsDir));
-
-        // Sanitize filename using the category name
-        const sanitizedCategoryName = selectedCategory.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const filePath = `${promptsDir}/${sanitizedCategoryName}.prompt.md`;
-
-        // Create the prompt file content with metadata
-        const promptContent = `# ${selectedLibbit.name}
-
-## Category: ${selectedCategory}
-${selectedLibbit.description ? `## Description: ${selectedLibbit.description}` : ''}
-
----
-
-${combinedContent}`;
-
-        // Write the file
-        await vscode.workspace.fs.writeFile(
-          vscode.Uri.file(filePath),
-          Buffer.from(promptContent, 'utf8')
+        // Create base directories and the category-specific directory
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(`${workspaceRoot}/.github`)
         );
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(`${workspaceRoot}/.github/prompts`)
+        );
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(`${workspaceRoot}/.github/prompts/clibbits`)
+        );
+        await vscode.workspace.fs.createDirectory(categoryUri);
 
-        // Open the created file
-        const document = await vscode.workspace.openTextDocument(filePath);
-        await vscode.window.showTextDocument(document);
+        // Save each clibbit to its own file within the category directory
+        for (let i = 0; i < clibbits.length; i++) {
+          const clibbit = clibbits[i];
+          // Use clibbit name if available and sanitize it, otherwise use index
+          const clibbitName = clibbit.prompt_name
+            ? sanitizeName(clibbit.prompt_name)
+            : `clibbit_${i + 1}`;
+          const fileName = `${clibbitName}.prompt.md`;
+          const filePath = `${categoryDir}/${fileName}`;
+          const fileUri = vscode.Uri.file(filePath);
 
-        vscode.window.showInformationMessage(`Successfully added ${selectedLibbit.name} (Category: ${selectedCategory}) to your prompt stack.`);
+          // Create the prompt file content (just the clibbit content)
+          const promptContent = clibbit.content;
+
+          // Write the file
+          await vscode.workspace.fs.writeFile(
+            fileUri,
+            Buffer.from(promptContent, "utf8")
+          );
+        }
+
+        // --- End of changes ---
+
+        vscode.window.showInformationMessage(
+          `Successfully added ${clibbits.length} clibbit(s) from ${selectedLibbit.name} to the '${selectedCategory}' stack.`
+        );
       } catch (error) {
         vscode.window.showErrorMessage(
-          `Failed to add to stack: ${error instanceof Error ? error.message : "Unknown error"}`
+          `Failed to add to stack: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
         );
       }
     });

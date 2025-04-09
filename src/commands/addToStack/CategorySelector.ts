@@ -7,9 +7,9 @@ export class CategorySelector {
     "Style",
     "Structure",
     "Analytics",
-    "Notifications",
     "Framework",
     "Syntax",
+    "Other",
   ];
 
   public async showCategoryQuickPick(): Promise<string | undefined> {
