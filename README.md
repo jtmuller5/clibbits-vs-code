@@ -56,6 +56,13 @@ Clibbits is a Visual Studio Code extension that makes vibe coding more enjoyable
 - Choose a category and select an item from the search results
 - The extension will create a prompt file with all associated documentation in the `.github/prompts/clibbits` directory
 
+### 🎨 Add Components
+- Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+- Select "Clibbits: Add Components"
+- Choose a component from the available Style components
+- The extension will automatically create prompt files for the selected components in the `.github/prompts/clibbits` directory
+- This command is specifically for adding UI style components, skipping the category selection
+
 ### 🔎 Search Clibbits
 - Open the Command Palette
 - Select "Clibbits: Search Clibbits"
