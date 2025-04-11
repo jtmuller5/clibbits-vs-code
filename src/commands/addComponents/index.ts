@@ -1,29 +1,25 @@
 import * as vscode from "vscode";
-import { CategorySelector } from "./CategorySelector";
-import { LibbitSelector } from "./LibbitSelector";
-import { getLibbitsByCategory, getClibbitsByLibbitId } from "./SupabaseClient";
+import { LibbitSelector } from "../addToStack/LibbitSelector";
+import {
+  getLibbitsByCategory,
+  getClibbitsByLibbitId,
+} from "../addToStack/SupabaseClient";
 
 // Helper function to sanitize names for filesystem paths
 const sanitizeName = (name: string): string => {
   return name.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 };
 
-export class AddToStackCommand {
-  public static readonly commandName = "clibbits.addToStack";
+export class AddComponentsCommand {
+  public static readonly commandName = "clibbits.addComponents";
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     return vscode.commands.registerCommand(this.commandName, async () => {
       try {
-        // Show category selector
-        const categorySelector = new CategorySelector();
-        const selectedCategory = await categorySelector.showCategoryQuickPick();
+        // Use "Style" as the fixed category
+        const selectedCategory = "Style";
 
-        if (!selectedCategory) {
-          // User cancelled the category selection
-          return;
-        }
-
-        // Fetch libbits for the selected category
+        // Fetch libbits for the Style category
         const libbits = await getLibbitsByCategory(selectedCategory);
 
         if (libbits.length === 0) {
@@ -45,7 +41,6 @@ export class AddToStackCommand {
         }
 
         // Get all clibbits for the selected libbit
-        // Assuming getClibbitsByLibbitId returns an array of objects like { id: string, name: string, content: string }
         const clibbits = await getClibbitsByLibbitId(selectedLibbit.id);
 
         if (clibbits.length === 0) {
@@ -54,8 +49,6 @@ export class AddToStackCommand {
           );
           return;
         }
-
-        // --- Start of changes ---
 
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
@@ -101,14 +94,12 @@ export class AddToStackCommand {
           );
         }
 
-        // --- End of changes ---
-
         vscode.window.showInformationMessage(
-          `Successfully added ${clibbits.length} clibbit(s) from ${selectedLibbit.name} to the '${selectedCategory}' stack.`
+          `Successfully added ${clibbits.length} component(s) from ${selectedLibbit.name} to the '${selectedCategory}' collection.`
         );
       } catch (error) {
         vscode.window.showErrorMessage(
-          `Failed to add to stack: ${
+          `Failed to add components: ${
             error instanceof Error ? error.message : "Unknown error"
           }`
         );

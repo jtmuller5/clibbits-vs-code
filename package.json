@@ -26,6 +26,7 @@
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.addToStack",
+    "onCommand:clibbits.addComponents",
     "onCommand:clibbits.requestLibrary",
     "onCommand:clibbits.createClibbit",
     "onCommand:clibbits.addToClibbit",
@@ -38,6 +39,11 @@
       {
         "command": "clibbits.addToStack",
         "title": "Add to Stack",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.addComponents",
+        "title": "Add Components",
         "category": "Clibbits"
       },
       {

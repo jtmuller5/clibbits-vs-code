@@ -11,4 +11,5 @@ export * from "./signOut";
 export * from "./shareClibbit";
 export * from "./searchClibbits";
 export * from "./requestLibrary";
+export * from "./addComponents";
 

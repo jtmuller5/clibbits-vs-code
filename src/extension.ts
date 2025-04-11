@@ -11,6 +11,7 @@ import {
   RequestLibraryCommand,
 } from "./commands";
 import { AddToStackCommand } from "./commands/addToStack";
+import { AddComponentsCommand } from "./commands/addComponents";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 import {
   AddToClibbitCodeLensProvider,
@@ -57,6 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
       SignOutCommand.register(context),
       ...AddToClibbitCommand.register(context),
       AddToStackCommand.register(context),
+      AddComponentsCommand.register(context),
       RequestLibraryCommand.register(context)
     );
     outputChannel.appendLine("Commands registered successfully");
