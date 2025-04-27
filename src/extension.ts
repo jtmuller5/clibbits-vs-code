@@ -9,6 +9,7 @@ import {
   SignInCommand,
   SignOutCommand,
   RequestLibraryCommand,
+  PasteAsFilesCommand,
 } from "./commands";
 import { AddToStackCommand } from "./commands/addToStack";
 import { AddComponentsCommand } from "./commands/addComponents";
@@ -59,7 +60,8 @@ export function activate(context: vscode.ExtensionContext) {
       ...AddToClibbitCommand.register(context),
       AddToStackCommand.register(context),
       AddComponentsCommand.register(context),
-      RequestLibraryCommand.register(context)
+      RequestLibraryCommand.register(context),
+      PasteAsFilesCommand.register(context)
     );
     outputChannel.appendLine("Commands registered successfully");
 

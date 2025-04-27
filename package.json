@@ -31,6 +31,7 @@
     "onCommand:clibbits.createClibbit",
     "onCommand:clibbits.addToClibbit",
     "onCommand:clibbits.addToClibbit.file",
+    "onCommand:clibbits.pasteAsFiles",
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
@@ -126,6 +127,12 @@
         "command": "clibbits.addToClibbit.file",
         "title": "Add to Clibbit",
         "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.pasteAsFiles",
+        "title": "Paste as Files",
+        "category": "Clibbits",
+        "icon": "$(file-add)"
       }
     ],
     "menus": {
@@ -171,6 +178,11 @@
           "command": "clibbits.addToClibbit.file",
           "group": "5_cutcopypaste",
           "when": "explorerResourceIsFolder || !explorerResourceIsFolder"
+        },
+        {
+          "command": "clibbits.pasteAsFiles",
+          "group": "5_cutcopypaste",
+          "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
