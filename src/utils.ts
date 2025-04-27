@@ -19,13 +19,13 @@ export function formatDocumentContent(
   contentBuilder.push(`File: ${relativePath}\n`);
   contentBuilder.push(FILE_HEADER_DECORATION);
   contentBuilder.push("\n");
-  if (languageId !== "plaintext" && languageId !== "markdown") {
+  /* if (languageId !== "plaintext" && languageId !== "markdown") {
     contentBuilder.push(`\`\`\`${languageId}\n`);
-  }
+  } */
   contentBuilder.push(document.getText());
-  if (languageId !== "plaintext" && languageId !== "markdown") {
+  /* if (languageId !== "plaintext" && languageId !== "markdown") {
     contentBuilder.push("\n```\n");
-  }
+  } */
   contentBuilder.push("\n\n");
 
   return contentBuilder.join("");
