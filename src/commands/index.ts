@@ -13,4 +13,5 @@ export * from "./searchClibbits";
 export * from "./requestLibrary";
 export * from "./addComponents";
 export * from "./pasteAsFiles";
+export * from "./copyFileHighlights";
 

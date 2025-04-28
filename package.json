@@ -23,6 +23,7 @@
     "onCommand:clibbits.copyFolderRecursive",
     "onCommand:clibbits.copyWithoutComments",
     "onCommand:clibbits.copyTreeStructure",
+    "onCommand:clibbits.copyFileHighlights",
     "onCommand:clibbits.signIn",
     "onCommand:clibbits.signOut",
     "onCommand:clibbits.addToStack",
@@ -133,6 +134,15 @@
         "title": "Paste as Files",
         "category": "Clibbits",
         "icon": "$(file-add)"
+      },
+      {
+        "command": "clibbits.copyFileHighlights",
+        "title": "Copy Highlights for AI",
+        "category": "Clibbits",
+        "icon": {
+          "light": "./resources/light/locate-fixed.svg",
+          "dark": "./resources/dark/locate-fixed.svg"
+        }
       }
     ],
     "menus": {
@@ -161,6 +171,11 @@
       "explorer/context": [
         {
           "command": "clibbits.copyFile",
+          "group": "5_cutcopypaste",
+          "when": "explorerViewletVisible && !explorerResourceIsFolder"
+        },
+        {
+          "command": "clibbits.copyFileHighlights",
           "group": "5_cutcopypaste",
           "when": "explorerViewletVisible && !explorerResourceIsFolder"
         },
@@ -197,6 +212,11 @@
           "when": "resourceScheme == file"
         },
         {
+          "command": "clibbits.copyFileHighlights",
+          "group": "5_cutcopypaste",
+          "when": "resourceScheme == file"
+        },
+        {
           "command": "clibbits.copyCodeBlock",
           "group": "5_cutcopypaste",
           "when": "editorHasSelection"
@@ -227,6 +247,12 @@
         },
         {
           "command": "clibbits.copyWithoutComments",
+          "when": "editorIsOpen",
+          "group": "navigation",
+          "order": 1
+        },
+        {
+          "command": "clibbits.copyFileHighlights",
           "when": "editorIsOpen",
           "group": "navigation",
           "order": 1

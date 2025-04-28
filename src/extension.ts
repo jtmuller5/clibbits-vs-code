@@ -10,6 +10,7 @@ import {
   SignOutCommand,
   RequestLibraryCommand,
   PasteAsFilesCommand,
+  CopyFileHighlightsCommand,
 } from "./commands";
 import { AddToStackCommand } from "./commands/addToStack";
 import { AddComponentsCommand } from "./commands/addComponents";
@@ -61,7 +62,8 @@ export function activate(context: vscode.ExtensionContext) {
       AddToStackCommand.register(context),
       AddComponentsCommand.register(context),
       RequestLibraryCommand.register(context),
-      PasteAsFilesCommand.register(context)
+      PasteAsFilesCommand.register(context),
+      CopyFileHighlightsCommand.register(context)
     );
     outputChannel.appendLine("Commands registered successfully");
 

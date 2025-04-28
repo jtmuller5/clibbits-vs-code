@@ -34,6 +34,14 @@ Clibbits is a Visual Studio Code extension that makes vibe coding more enjoyable
 - Or use the keyboard shortcut `Ctrl+Shift+B` (Windows/Linux) or `Cmd+Shift+B` (Mac)
 - The entire code block will be copied to your clipboard
 
+### 🔍 Copy File Highlights
+- Mark sections of your code with `!clibbits` markers
+- Right-click the file in the explorer or editor
+- Select "Clibbits: Copy Highlights for AI"
+- Only the marked sections will be copied to your clipboard
+- Great for focusing on specific parts of large files
+- See the [examples](./examples/) directory for more details
+
 ### 📁 Copy Folder Contents
 - Right-click any folder in the explorer
 - Select "Clibbits: Copy Folder Contents to Clipboard"
@@ -138,6 +146,24 @@ function example() {
 }
 ```
 
+### Highlights
+When using the Copy File Highlights feature, only the text between `!clibbits` markers is copied:
+
+```
+// This part won't be copied
+
+// !clibbits
+/**
+ * This function will be copied
+ */
+function importantFunction() {
+  // This code will be copied
+}
+// !clibbits
+
+// This part won't be copied
+```
+
 ## Installation
 
 1. Open Visual Studio Code
@@ -165,6 +191,12 @@ function example() {
    - Right-click anywhere inside a code block (function, class, etc.)
    - Select "Clibbits: Copy Code Block to Clipboard"
    - The block will be briefly highlighted to show what was copied
+
+3. Copy Highlights:
+   - Add `!clibbits` markers in your file to highlight important sections
+   - Right-click in the editor
+   - Select "Clibbits: Copy Highlights for AI"
+   - Only the text between the markers will be copied
 
 ### From Command Palette
 1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS)
