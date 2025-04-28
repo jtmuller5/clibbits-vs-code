@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { FILE_HEADER_DECORATION, extractTextHighlights } from "../utils";
+import {
+  FILE_HEADER_DECORATION,
+  extractTextHighlights,
+  formatHighlightedDocumentContent,
+} from "../utils";
 
 export class CopyFileHighlightsCommand {
   public static readonly commandName = "clibbits.copyFileHighlights";
@@ -44,7 +48,7 @@ export class CopyFileHighlightsCommand {
             try {
               const document = await vscode.workspace.openTextDocument(fileUri);
               const highlightedContent = extractTextHighlights(document);
-              
+
               // Skip files that don't have any highlighted blocks
               if (!highlightedContent.trim()) {
                 continue;
@@ -57,26 +61,9 @@ export class CopyFileHighlightsCommand {
 
               const workspaceFolder =
                 vscode.workspace.getWorkspaceFolder(fileUri);
-              const rootPath = workspaceFolder
-                ? workspaceFolder.uri.fsPath
-                : "";
-              const relativePath = rootPath
-                ? path.relative(rootPath, fileUri.fsPath)
-                : path.basename(fileUri.fsPath);
-
-              const languageId = document.languageId;
-
-              contentBuilder.push(FILE_HEADER_DECORATION);
-              contentBuilder.push(`File: ${relativePath}\n`);
-              contentBuilder.push(FILE_HEADER_DECORATION);
-              contentBuilder.push("\n");
-              if (languageId !== "plaintext" && languageId !== "markdown") {
-                contentBuilder.push(`\`\`\`${languageId}\n`);
-              }
-              contentBuilder.push(highlightedContent);
-              if (languageId !== "plaintext" && languageId !== "markdown") {
-                contentBuilder.push("\n```\n");
-              }
+              contentBuilder.push(
+                formatHighlightedDocumentContent(document, workspaceFolder)
+              );
 
               successfulCopies++;
               totalSize += highlightedContent.length;
@@ -87,9 +74,9 @@ export class CopyFileHighlightsCommand {
               }
             } catch (error) {
               vscode.window.showWarningMessage(
-                `Failed to copy highlights from ${path.basename(fileUri.fsPath)}: ${
-                  error instanceof Error ? error.message : "Unknown error"
-                }`
+                `Failed to copy highlights from ${path.basename(
+                  fileUri.fsPath
+                )}: ${error instanceof Error ? error.message : "Unknown error"}`
               );
             }
           }

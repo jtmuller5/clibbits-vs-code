@@ -75,6 +75,33 @@ export function extractTextExcludingXclibbits(
   return result.join("\n");
 }
 
+export function formatHighlightedDocumentContent(
+  document: vscode.TextDocument,
+  workspaceFolder: vscode.WorkspaceFolder | undefined
+): string {
+  const contentBuilder: string[] = [];
+  const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : "";
+  const relativePath = rootPath
+    ? path.relative(rootPath, document.fileName)
+    : path.basename(document.fileName);
+
+  const languageId = document.languageId;
+
+  contentBuilder.push(FILE_HEADER_DECORATION);
+  contentBuilder.push(`File: ${relativePath}\n`);
+  contentBuilder.push(FILE_HEADER_DECORATION);
+  contentBuilder.push("\n");
+  if (languageId !== "plaintext" && languageId !== "markdown") {
+    contentBuilder.push(`\`\`\`${languageId}\n`);
+  }
+  contentBuilder.push(extractTextHighlights(document));
+  if (languageId !== "plaintext" && languageId !== "markdown") {
+    contentBuilder.push("\n```\n");
+  }
+
+  return contentBuilder.join("");
+}
+
 /**
  * Extracts text blocks surrounded by lines containing "!clibbits"
  * @param document The text document to extract highlighted blocks from

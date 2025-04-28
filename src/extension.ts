@@ -22,6 +22,7 @@ import {
 import { initializeSupabaseWithSession } from "./supabase/client";
 import { SupabaseStatusBar } from "./supabase/statusBar";
 import { AddToClibbitCommand, CreateClibbitCommand, CreateClibbitFolderCommand } from "./commands/prompts";
+import { CopyFolderHighlightsRecursiveCommand } from "./commands/copyFolderHighlightsRecursive";
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel
@@ -51,6 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
       CopyFileCommand.register(context),
       CopyCodeBlockCommand.register(context),
       CopyFolderRecursiveCommand.register(context),
+      CopyFolderHighlightsRecursiveCommand.register(context),
       CopyWithoutCommentsCommand.register(context),
       CopyAllFilesWithoutCommentsCommand.register(context),
       CopyTreeStructureCommand.register(context),

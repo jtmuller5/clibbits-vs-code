@@ -21,6 +21,7 @@
     "onCommand:clibbits.copyFile",
     "onCommand:clibbits.copyCodeBlock",
     "onCommand:clibbits.copyFolderRecursive",
+    "onCommand:clibbits.copyFolderHighlightsRecursive",
     "onCommand:clibbits.copyWithoutComments",
     "onCommand:clibbits.copyTreeStructure",
     "onCommand:clibbits.copyFileHighlights",
@@ -90,6 +91,11 @@
       {
         "command": "clibbits.copyFolderRecursive",
         "title": "Copy for AI",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "clibbits.copyFolderHighlightsRecursive",
+        "title": "Copy Highlights for AI",
         "icon": "$(copy)"
       },
       {
@@ -181,6 +187,11 @@
         },
         {
           "command": "clibbits.copyFolderRecursive",
+          "group": "5_cutcopypaste",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "clibbits.copyFolderHighlightsRecursive",
           "group": "5_cutcopypaste",
           "when": "explorerResourceIsFolder"
         },
