@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { FILE_HEADER_DECORATION } from "../utils";
+import {
+  extractTextExcludingXclibbits,
+  FILE_HEADER_DECORATION,
+  formatDocumentContent,
+} from "../utils";
 
 export class CopyFileCommand {
   public static readonly commandName = "clibbits.copyFile";
@@ -37,7 +41,7 @@ export class CopyFileCommand {
           for (const fileUri of urisToProcess) {
             try {
               const document = await vscode.workspace.openTextDocument(fileUri);
-              const content = document.getText();
+              const content = extractTextExcludingXclibbits(document);
 
               // Add file separator if this isn't the first file
               if (successfulCopies > 0) {
@@ -46,26 +50,10 @@ export class CopyFileCommand {
 
               const workspaceFolder =
                 vscode.workspace.getWorkspaceFolder(fileUri);
-              const rootPath = workspaceFolder
-                ? workspaceFolder.uri.fsPath
-                : "";
-              const relativePath = rootPath
-                ? path.relative(rootPath, fileUri.fsPath)
-                : path.basename(fileUri.fsPath);
 
-              const languageId = document.languageId;
-
-              contentBuilder.push(FILE_HEADER_DECORATION);
-              contentBuilder.push(`File: ${relativePath}\n`);
-              contentBuilder.push(FILE_HEADER_DECORATION);
-              contentBuilder.push("\n");
-              if (languageId !== "plaintext" && languageId !== "markdown") {
-                contentBuilder.push(`\`\`\`${languageId}\n`);
-              }
-              contentBuilder.push(content);
-              if (languageId !== "plaintext" && languageId !== "markdown") {
-                contentBuilder.push("\n```\n");
-              }
+              contentBuilder.push(
+                formatDocumentContent(document, workspaceFolder)
+              );
 
               successfulCopies++;
               totalSize += content.length;

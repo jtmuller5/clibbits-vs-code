@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { FILE_HEADER_DECORATION } from "../utils";
+import {
+  extractTextExcludingXclibbits,
+  FILE_HEADER_DECORATION,
+} from "../utils";
 
 export class CopyWithoutCommentsCommand {
   public static readonly commandName = "clibbits.copyWithoutComments";
@@ -81,7 +84,7 @@ export class CopyWithoutCommentsCommand {
             try {
               const document = await vscode.workspace.openTextDocument(fileUri);
               const contentWithoutComments = this.removeComments(
-                document.getText()
+                extractTextExcludingXclibbits(document)
               );
               const workspaceFolder = vscode.workspace.getWorkspaceFolder(
                 document.uri

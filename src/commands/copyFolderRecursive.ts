@@ -1,7 +1,11 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
-import { FILE_HEADER_DECORATION } from "../utils";
+import {
+  extractTextExcludingXclibbits,
+  FILE_HEADER_DECORATION,
+  formatDocumentContent,
+} from "../utils";
 
 export class CopyFolderRecursiveCommand {
   public static readonly commandName = "clibbits.copyFolderRecursive";
@@ -108,39 +112,22 @@ export class CopyFolderRecursiveCommand {
 
               for (const filePath of filePaths) {
                 try {
-                  const content = await fs.promises.readFile(filePath, "utf8");
                   const document = await vscode.workspace.openTextDocument(
                     vscode.Uri.file(filePath)
                   );
+                  const content = extractTextExcludingXclibbits(document);
+
                   const workspaceFolder =
                     vscode.workspace.getWorkspaceFolder(uri);
-                  const rootPath = workspaceFolder
-                    ? workspaceFolder.uri.fsPath
-                    : "";
-                  // Derive relative path from the workspace root
-                  const relativePath = rootPath
-                    ? path.relative(rootPath, filePath)
-                    : path.relative(uri.fsPath, filePath);
 
                   // Add separator between files
                   if (processedFiles > 0) {
                     contentBuilder.push("\n");
                   }
 
-                  const languageId = document.languageId;
-
-                  contentBuilder.push(FILE_HEADER_DECORATION);
-                  contentBuilder.push(`File: ${relativePath}\n`);
-                  contentBuilder.push(FILE_HEADER_DECORATION);
-                  contentBuilder.push("\n");
-                  if (languageId !== "plaintext" && languageId !== "markdown") {
-                    contentBuilder.push(`\`\`\`${languageId}\n`);
-                  }
-                  contentBuilder.push(content);
-                  if (languageId !== "plaintext" && languageId !== "markdown") {
-                    contentBuilder.push("\n```\n");
-                  }
-                  contentBuilder.push("\n");
+                  contentBuilder.push(
+                    formatDocumentContent(document, workspaceFolder)
+                  );
 
                   processedFiles++;
                   totalSize += content.length;
