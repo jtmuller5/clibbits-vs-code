@@ -13,7 +13,7 @@
     "Other"
   ],
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.93.0"
   },
   "activationEvents": [
     "onCommand:clibbits.copyAllFiles",
@@ -25,11 +25,6 @@
     "onCommand:clibbits.copyWithoutComments",
     "onCommand:clibbits.copyTreeStructure",
     "onCommand:clibbits.copyFileHighlights",
-    "onCommand:clibbits.signIn",
-    "onCommand:clibbits.signOut",
-    "onCommand:clibbits.addToStack",
-    "onCommand:clibbits.addComponents",
-    "onCommand:clibbits.requestLibrary",
     "onCommand:clibbits.createClibbit",
     "onCommand:clibbits.addToClibbit",
     "onCommand:clibbits.addToClibbit.file",
@@ -39,26 +34,6 @@
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "clibbits.addToStack",
-        "title": "Add to Stack",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.addComponents",
-        "title": "Add Components",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.signIn",
-        "title": "Sign In to Clibbits",
-        "category": "Clibbits"
-      },
-      {
-        "command": "clibbits.signOut",
-        "title": "Sign Out from Clibbits",
-        "category": "Clibbits"
-      },
       {
         "command": "clibbits.copyAllFiles",
         "title": "Copy Open Files for AI",
@@ -111,11 +86,6 @@
         "title": "Copy Tree Structure"
       },
       {
-        "command": "clibbits.requestLibrary",
-        "title": "Request New Library Support",
-        "category": "Clibbits"
-      },
-      {
         "command": "clibbits.createClibbitFolder",
         "title": "Create Clibbits Folder",
         "category": "Clibbits"
@@ -149,31 +119,19 @@
           "light": "./resources/light/locate-fixed.svg",
           "dark": "./resources/dark/locate-fixed.svg"
         }
+      },
+      {
+        "command": "clibbits.showContextServerStatus",
+        "title": "Show Context Server Status",
+        "category": "Clibbits"
+      },
+      {
+        "command": "clibbits.initializeClibbitConfig",
+        "title": "Initialize .clibbits Config",
+        "category": "Clibbits"
       }
     ],
     "menus": {
-      "statusBar/context": [
-        {
-          "command": "clibbits.signIn",
-          "group": "1_supabase",
-          "when": "true"
-        },
-        {
-          "command": "clibbits.signOut",
-          "group": "1_supabase",
-          "when": "true"
-        }
-      ],
-      "commandPalette": [
-        {
-          "command": "clibbits.signIn",
-          "when": "true"
-        },
-        {
-          "command": "clibbits.signOut",
-          "when": "true"
-        }
-      ],
       "explorer/context": [
         {
           "command": "clibbits.copyFile",
@@ -292,6 +250,46 @@
           "type": "boolean",
           "default": true,
           "description": "Enable Code Lens for adding selected code to clibbits"
+        },
+        "clibbits.contextServer.port": {
+          "type": "number",
+          "default": 24891,
+          "description": "Port for the Clibbits context server (localhost only)"
+        },
+        "clibbits.contextServer.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the Clibbits context server on activation"
+        },
+        "clibbits.terminalHistorySize": {
+          "type": "number",
+          "default": 50,
+          "description": "Maximum number of commands to keep in terminal history per terminal"
+        },
+        "clibbits.terminalMaxOutputBytes": {
+          "type": "number",
+          "default": 50000,
+          "description": "Maximum bytes of output to capture per terminal command"
+        },
+        "clibbits.configFileName": {
+          "type": "string",
+          "default": ".clibbits",
+          "description": "Name of the project configuration file"
+        },
+        "clibbits.autoVocabulary": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-extract vocabulary from document symbols"
+        },
+        "clibbits.visibleTextInContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include visible editor text in context responses"
+        },
+        "clibbits.maxRecentFiles": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum number of recent files to track"
         }
       }
     }
@@ -306,14 +304,13 @@
   },
   "devDependencies": {
     "@types/node": "14.x",
-    "@types/vscode": "^1.60.0",
+    "@types/vscode": "^1.109.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.1.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.4",
     "gray-matter": "^4.0.3",
     "yaml": "^2.3.1"
   }

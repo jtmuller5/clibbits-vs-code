@@ -6,12 +6,7 @@ export * from "./copyFolderRecursive";
 export * from "./copyWithoutComments";
 export * from "./copyAllFilesWithoutComments";
 export * from "./copyTreeStructure";
-export * from "./signIn";
-export * from "./signOut";
-export * from "./shareClibbit";
-export * from "./searchClibbits";
-export * from "./requestLibrary";
-export * from "./addComponents";
 export * from "./pasteAsFiles";
 export * from "./copyFileHighlights";
-
+export * from "./showContextServerStatus";
+export * from "./initializeClibbitConfig";

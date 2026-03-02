@@ -6,45 +6,32 @@ import {
   CopyFolderRecursiveCommand,
   CopyTreeStructureCommand,
   CopyWithoutCommentsCommand,
-  SignInCommand,
-  SignOutCommand,
-  RequestLibraryCommand,
   PasteAsFilesCommand,
   CopyFileHighlightsCommand,
+  ShowContextServerStatusCommand,
+  InitializeClibbitConfigCommand,
 } from "./commands";
-import { AddToStackCommand } from "./commands/addToStack";
-import { AddComponentsCommand } from "./commands/addComponents";
 import { CopyAllFilesWithoutCommentsCommand } from "./commands/copyAllFilesWithoutComments";
 import {
   AddToClibbitCodeLensProvider,
   PromptCodeLensProvider,
 } from "./providers";
-import { initializeSupabaseWithSession } from "./supabase/client";
-import { SupabaseStatusBar } from "./supabase/statusBar";
 import { AddToClibbitCommand, CreateClibbitCommand, CreateClibbitFolderCommand } from "./commands/prompts";
 import { CopyFolderHighlightsRecursiveCommand } from "./commands/copyFolderHighlightsRecursive";
+import { ClibbitConfig } from "./server/ClibbitConfig";
+import { TerminalTracker } from "./server/TerminalTracker";
+import { ContextAssembler } from "./server/ContextAssembler";
+import { ContextServer } from "./server/ContextServer";
+import { ServerStatusBar } from "./server/ServerStatusBar";
+
+let contextServer: ContextServer | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
   // Create output channel
   const outputChannel = vscode.window.createOutputChannel("Clibbits");
   outputChannel.appendLine("Activating Clibbits extension");
 
-  // Create a status bar item for Supabase authentication
-  const statusBar = new SupabaseStatusBar(context);
-  context.subscriptions.push(statusBar);
-
   try {
-    // Initialize Supabase with existing session if available
-    outputChannel.appendLine("Initializing Supabase client...");
-    context.secrets.get("supabase.session").then((sessionString) => {
-      if (sessionString) {
-        initializeSupabaseWithSession(sessionString);
-        outputChannel.appendLine("Supabase session restored");
-      } else {
-        outputChannel.appendLine("No Supabase session found");
-      }
-    });
-
     // Register commands
     outputChannel.appendLine("Registering commands...");
     context.subscriptions.push(
@@ -58,14 +45,10 @@ export function activate(context: vscode.ExtensionContext) {
       CopyTreeStructureCommand.register(context),
       CreateClibbitFolderCommand.register(context),
       CreateClibbitCommand.register(context),
-      SignInCommand.register(context),
-      SignOutCommand.register(context),
       ...AddToClibbitCommand.register(context),
-      AddToStackCommand.register(context),
-      AddComponentsCommand.register(context),
-      RequestLibraryCommand.register(context),
       PasteAsFilesCommand.register(context),
-      CopyFileHighlightsCommand.register(context)
+      CopyFileHighlightsCommand.register(context),
+      InitializeClibbitConfigCommand.register()
     );
     outputChannel.appendLine("Commands registered successfully");
 
@@ -82,13 +65,57 @@ export function activate(context: vscode.ExtensionContext) {
        vscode.languages.registerCodeLensProvider(
         '*', // Apply to all files
         promptCodeLensProvider
-      ) 
+      )
     ); */
     outputChannel.appendLine("Code lens providers registered successfully");
+
+    // Context Server setup
+    const serverEnabled = vscode.workspace
+      .getConfiguration("clibbits")
+      .get<boolean>("contextServer.enabled", true);
+
+    if (serverEnabled) {
+      outputChannel.appendLine("Starting context server...");
+
+      const clibbitConfig = new ClibbitConfig();
+      clibbitConfig.activate(context);
+
+      const terminalTracker = new TerminalTracker();
+      terminalTracker.activate(context);
+
+      const assembler = new ContextAssembler(terminalTracker, clibbitConfig);
+      assembler.activate(context);
+
+      contextServer = new ContextServer(assembler, outputChannel);
+
+      const statusBar = new ServerStatusBar(contextServer);
+      context.subscriptions.push({ dispose: () => statusBar.dispose() });
+
+      context.subscriptions.push(
+        ShowContextServerStatusCommand.register(contextServer)
+      );
+
+      contextServer.start().then(
+        () => outputChannel.appendLine("Context server started"),
+        (err) => outputChannel.appendLine(`Context server failed to start: ${err}`)
+      );
+
+      context.subscriptions.push({
+        dispose: () => {
+          contextServer?.stop();
+          contextServer = undefined;
+        },
+      });
+    } else {
+      outputChannel.appendLine("Context server is disabled");
+    }
   } catch (error) {
     outputChannel.appendLine(`Error during activation: ${error}`);
     console.error("Error activating Clibbits:", error);
   }
 }
 
-export function deactivate() {}
+export function deactivate() {
+  contextServer?.stop();
+  contextServer = undefined;
+}
